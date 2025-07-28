@@ -10,7 +10,7 @@ import os
 import sys
 from pathlib import Path
 
-from fuzzer.fuzzer import PythonFuzzer
+from tools.fuzzer.fuzzer import PythonFuzzer
 
 
 def print_summary(reports):

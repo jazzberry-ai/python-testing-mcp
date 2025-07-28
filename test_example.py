@@ -3,9 +3,9 @@ Basic test file to verify the fuzzing tool works correctly.
 """
 
 import pytest
-from fuzzer.fuzzer import PythonFuzzer
-from fuzzer.analyzer import CodeAnalyzer
-from fuzzer.gemini_client import GeminiClient
+from tools.fuzzer.fuzzer import PythonFuzzer
+from tools.fuzzer.analyzer import CodeAnalyzer
+from tools.fuzzer.gemini_client import GeminiClient
 import os
 
 
