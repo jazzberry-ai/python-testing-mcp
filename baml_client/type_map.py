@@ -25,6 +25,21 @@ type_map = {
     "types.FuzzTestInput": types.FuzzTestInput,
     "stream_types.FuzzTestInput": stream_types.FuzzTestInput,
 
+    "types.Mutant": types.Mutant,
+    "stream_types.Mutant": stream_types.Mutant,
+
+    "types.MutationOperator": types.MutationOperator,
+    "stream_types.MutationOperator": stream_types.MutationOperator,
+
+    "types.MutationReport": types.MutationReport,
+    "stream_types.MutationReport": stream_types.MutationReport,
+
+    "types.MutationResult": types.MutationResult,
+    "stream_types.MutationResult": stream_types.MutationResult,
+
+    "types.MutationStrategy": types.MutationStrategy,
+    "stream_types.MutationStrategy": stream_types.MutationStrategy,
+
     "types.UnitTestCase": types.UnitTestCase,
     "stream_types.UnitTestCase": stream_types.UnitTestCase,
 

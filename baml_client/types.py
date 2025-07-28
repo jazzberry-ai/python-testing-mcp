@@ -41,7 +41,7 @@ def all_succeeded(checks: typing.Dict[CheckName, Check]) -> bool:
 # #########################################################################
 
 # #########################################################################
-# Generated classes (4)
+# Generated classes (9)
 # #########################################################################
 
 class CoverageImprovement(BaseModel):
@@ -64,6 +64,50 @@ class FuzzTestInput(BaseModel):
     kwargs: typing.Dict[str, typing.Optional[typing.Union[str, int, float, bool]]]
     description: str
     expected_behavior: typing.Union[typing_extensions.Literal['normal'], typing_extensions.Literal['error'], typing_extensions.Literal['edge_case']]
+
+class Mutant(BaseModel):
+    id: str
+    operator_name: str
+    original_code: str
+    mutated_code: str
+    line_number: int
+    column_number: int
+    function_name: str
+    description: str
+
+class MutationOperator(BaseModel):
+    name: str
+    description: str
+    category: typing.Union[typing_extensions.Literal['arithmetic'], typing_extensions.Literal['comparison'], typing_extensions.Literal['logical'], typing_extensions.Literal['boolean'], typing_extensions.Literal['constant'], typing_extensions.Literal['statement']]
+    original_pattern: str
+    mutated_pattern: str
+    risk_level: typing.Union[typing_extensions.Literal['low'], typing_extensions.Literal['medium'], typing_extensions.Literal['high']]
+
+class MutationReport(BaseModel):
+    total_mutants: int
+    killed_mutants: int
+    survived_mutants: int
+    timeout_mutants: int
+    error_mutants: int
+    mutation_score: float
+    function_scores: typing.Dict[str, float]
+    weak_areas: typing.List[str]
+    improvement_suggestions: typing.List[str]
+
+class MutationResult(BaseModel):
+    mutant_id: str
+    status: typing.Union[typing_extensions.Literal['killed'], typing_extensions.Literal['survived'], typing_extensions.Literal['timeout'], typing_extensions.Literal['error']]
+    execution_time_ms: int
+    test_output: str
+    failing_tests: typing.List[str]
+    error_message: str
+
+class MutationStrategy(BaseModel):
+    target_functions: typing.List[str]
+    recommended_operators: typing.List["MutationOperator"]
+    priority_areas: typing.List[str]
+    expected_mutant_count: int
+    rationale: str
 
 class UnitTestCase(BaseModel):
     name: str

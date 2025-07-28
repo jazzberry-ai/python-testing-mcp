@@ -35,6 +35,62 @@ class CoverageImprovement {
   code_examples string[]
 }
 
+// Mutation testing schemas
+
+// Mutation operator definition
+class MutationOperator {
+  name string
+  description string
+  category "arithmetic" | "comparison" | "logical" | "boolean" | "constant" | "statement"
+  original_pattern string
+  mutated_pattern string
+  risk_level "low" | "medium" | "high"
+}
+
+// Individual mutant information
+class Mutant {
+  id string
+  operator_name string
+  original_code string
+  mutated_code string
+  line_number int
+  column_number int
+  function_name string
+  description string
+}
+
+// Result of testing a single mutant
+class MutationResult {
+  mutant_id string
+  status "killed" | "survived" | "timeout" | "error"
+  execution_time_ms int
+  test_output string
+  failing_tests string[]
+  error_message string
+}
+
+// Mutation strategy recommendation
+class MutationStrategy {
+  target_functions string[]
+  recommended_operators MutationOperator[]
+  priority_areas string[]
+  expected_mutant_count int
+  rationale string
+}
+
+// Comprehensive mutation testing report
+class MutationReport {
+  total_mutants int
+  killed_mutants int
+  survived_mutants int
+  timeout_mutants int
+  error_mutants int
+  mutation_score float
+  function_scores map<string, float>
+  weak_areas string[]
+  improvement_suggestions string[]
+}
+
 // Generate fuzzing test inputs for a Python function
 function GenerateFuzzingInputs(
   function_signature: string,
@@ -162,6 +218,120 @@ function GenerateCoverageImprovements(
   "#
 }
 
+// Generate mutation testing strategy for a Python file
+function GenerateMutationStrategy(
+  file_path: string,
+  function_code: string,
+  existing_tests: string,
+  target_functions: string[]
+) -> MutationStrategy {
+  client TestingFallback
+  prompt #"
+    Analyze this Python code and generate an intelligent mutation testing strategy:
+
+    File: {{ file_path }}
+    Target functions: {{ target_functions }}
+
+    Code to analyze:
+    ```python
+    {{ function_code }}
+    ```
+
+    Existing tests:
+    ```python
+    {{ existing_tests }}
+    ```
+
+    Generate a comprehensive mutation testing strategy that includes:
+    1. Recommended mutation operators based on the code patterns
+    2. Priority areas where mutations are most likely to reveal test weaknesses
+    3. Expected number of mutants to generate
+    4. Rationale for the mutation strategy
+
+    Focus on mutations that are most likely to:
+    - Reveal missing test cases
+    - Expose weak assertions
+    - Find boundary condition issues
+    - Identify logical errors in tests
+
+    {{ ctx.output_format }}
+  "#
+}
+
+// Analyze mutation testing results and provide insights
+function AnalyzeMutationResults(
+  file_path: string,
+  mutation_results: string,
+  survived_mutants: string[],
+  killed_mutants: string[],
+  mutation_score: float
+) -> MutationReport {
+  client TestingFallback
+  prompt #"
+    Analyze these mutation testing results and provide comprehensive insights:
+
+    File: {{ file_path }}
+    Mutation Score: {{ mutation_score }}%
+
+    Mutation Results Summary:
+    {{ mutation_results }}
+
+    Survived Mutants (these reveal test weaknesses):
+    {{ survived_mutants }}
+
+    Killed Mutants (these show good test coverage):
+    {{ killed_mutants }}
+
+    Provide a detailed analysis including:
+    1. Overall assessment of test quality based on mutation score
+    2. Identification of weak areas where mutants survived
+    3. Specific suggestions for improving tests to kill surviving mutants
+    4. Function-by-function mutation score analysis
+    5. Prioritized recommendations for test improvements
+
+    Focus on actionable insights that will help improve test effectiveness.
+
+    {{ ctx.output_format }}
+  "#
+}
+
+// Generate specific test improvements based on surviving mutants
+function GenerateTestImprovements(
+  function_code: string,
+  surviving_mutants: string[],
+  current_tests: string
+) -> string[] {
+  client TestingFallback
+  prompt #"
+    Analyze these surviving mutants and generate specific test improvements:
+
+    Original function:
+    ```python
+    {{ function_code }}
+    ```
+
+    Current tests:
+    ```python
+    {{ current_tests }}
+    ```
+
+    Surviving mutants that need to be killed:
+    {{ surviving_mutants }}
+
+    For each surviving mutant, provide:
+    1. Why the current tests failed to catch this mutation
+    2. Specific test cases that would kill this mutant
+    3. The exact test code to add
+    4. Explanation of what the new test validates
+
+    Generate concrete, executable test code that will improve mutation score.
+
+    Return an array of test improvement suggestions as strings.
+
+    {{ ctx.output_format }}
+  "#
+}
+
 // Test the fuzzing function
 test sample_fuzzing {
   functions [GenerateFuzzingInputs]
@@ -188,5 +358,35 @@ test sample_unit_tests {
     "#
     framework "pytest"
     docstring "Divide x by y."
+  }
+}
+
+// Test the mutation strategy generation
+test sample_mutation_strategy {
+  functions [GenerateMutationStrategy]
+  args {
+    file_path "test_calculator.py"
+    function_code #"
+      def add_numbers(a, b):
+          """Add two numbers together."""
+          if a < 0 or b < 0:
+              return 0
+          return a + b
+      
+      def multiply(x, y):
+          """Multiply two numbers."""
+          result = 0
+          for i in range(y):
+              result += x
+          return result
+    "#
+    existing_tests #"
+      def test_add_positive():
+          assert add_numbers(2, 3) == 5
+      
+      def test_multiply_basic():
+          assert multiply(3, 4) == 12
+    "#
+    target_functions ["add_numbers", "multiply"]
   }
 }

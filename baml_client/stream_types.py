@@ -23,7 +23,7 @@ class StreamState(BaseModel, typing.Generic[StreamStateValueT]):
     value: StreamStateValueT
     state: typing_extensions.Literal["Pending", "Incomplete", "Complete"]
 # #########################################################################
-# Generated classes (4)
+# Generated classes (9)
 # #########################################################################
 
 class CoverageImprovement(BaseModel):
@@ -46,6 +46,50 @@ class FuzzTestInput(BaseModel):
     kwargs: typing.Dict[str, typing.Optional[typing.Union[str, int, float, bool]]]
     description: typing.Optional[str] = None
     expected_behavior: typing.Optional[typing.Union[str, str, str]] = None
+
+class Mutant(BaseModel):
+    id: typing.Optional[str] = None
+    operator_name: typing.Optional[str] = None
+    original_code: typing.Optional[str] = None
+    mutated_code: typing.Optional[str] = None
+    line_number: typing.Optional[int] = None
+    column_number: typing.Optional[int] = None
+    function_name: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+
+class MutationOperator(BaseModel):
+    name: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    category: typing.Optional[typing.Union[str, str, str, str, str, str]] = None
+    original_pattern: typing.Optional[str] = None
+    mutated_pattern: typing.Optional[str] = None
+    risk_level: typing.Optional[typing.Union[str, str, str]] = None
+
+class MutationReport(BaseModel):
+    total_mutants: typing.Optional[int] = None
+    killed_mutants: typing.Optional[int] = None
+    survived_mutants: typing.Optional[int] = None
+    timeout_mutants: typing.Optional[int] = None
+    error_mutants: typing.Optional[int] = None
+    mutation_score: typing.Optional[float] = None
+    function_scores: typing.Dict[str, float]
+    weak_areas: typing.List[str]
+    improvement_suggestions: typing.List[str]
+
+class MutationResult(BaseModel):
+    mutant_id: typing.Optional[str] = None
+    status: typing.Optional[typing.Union[str, str, str, str]] = None
+    execution_time_ms: typing.Optional[int] = None
+    test_output: typing.Optional[str] = None
+    failing_tests: typing.List[str]
+    error_message: typing.Optional[str] = None
+
+class MutationStrategy(BaseModel):
+    target_functions: typing.List[str]
+    recommended_operators: typing.List["MutationOperator"]
+    priority_areas: typing.List[str]
+    expected_mutant_count: typing.Optional[int] = None
+    rationale: typing.Optional[str] = None
 
 class UnitTestCase(BaseModel):
     name: typing.Optional[str] = None

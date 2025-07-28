@@ -92,6 +92,13 @@ class BamlSyncClient:
             "function_code": function_code,"error_info": error_info,"test_input": test_input,
         })
         return typing.cast(types.CrashAnalysis, result.cast_to(types, types, stream_types, False, __runtime__))
+    def AnalyzeMutationResults(self, file_path: str,mutation_results: str,survived_mutants: typing.List[str],killed_mutants: typing.List[str],mutation_score: float,
+        baml_options: BamlCallOptions = {},
+    ) -> types.MutationReport:
+        result = self.__options.merge_options(baml_options).call_function_sync(function_name="AnalyzeMutationResults", args={
+            "file_path": file_path,"mutation_results": mutation_results,"survived_mutants": survived_mutants,"killed_mutants": killed_mutants,"mutation_score": mutation_score,
+        })
+        return typing.cast(types.MutationReport, result.cast_to(types, types, stream_types, False, __runtime__))
     def GenerateCoverageImprovements(self, file_path: str,uncovered_functions: typing.List[str],missing_lines: typing.List[int],current_coverage: float,
         baml_options: BamlCallOptions = {},
     ) -> typing.List["types.CoverageImprovement"]:
@@ -106,6 +113,20 @@ class BamlSyncClient:
             "function_signature": function_signature,"function_code": function_code,"num_inputs": num_inputs,
         })
         return typing.cast(typing.List["types.FuzzTestInput"], result.cast_to(types, types, stream_types, False, __runtime__))
+    def GenerateMutationStrategy(self, file_path: str,function_code: str,existing_tests: str,target_functions: typing.List[str],
+        baml_options: BamlCallOptions = {},
+    ) -> types.MutationStrategy:
+        result = self.__options.merge_options(baml_options).call_function_sync(function_name="GenerateMutationStrategy", args={
+            "file_path": file_path,"function_code": function_code,"existing_tests": existing_tests,"target_functions": target_functions,
+        })
+        return typing.cast(types.MutationStrategy, result.cast_to(types, types, stream_types, False, __runtime__))
+    def GenerateTestImprovements(self, function_code: str,surviving_mutants: typing.List[str],current_tests: str,
+        baml_options: BamlCallOptions = {},
+    ) -> typing.List[str]:
+        result = self.__options.merge_options(baml_options).call_function_sync(function_name="GenerateTestImprovements", args={
+            "function_code": function_code,"surviving_mutants": surviving_mutants,"current_tests": current_tests,
+        })
+        return typing.cast(typing.List[str], result.cast_to(types, types, stream_types, False, __runtime__))
     def GenerateUnitTestCases(self, function_signature: str,function_code: str,framework: str,docstring: str,
         baml_options: BamlCallOptions = {},
     ) -> typing.List["types.UnitTestCase"]:
@@ -134,6 +155,18 @@ class BamlStreamClient:
           lambda x: typing.cast(types.CrashAnalysis, x.cast_to(types, types, stream_types, False, __runtime__)),
           ctx,
         )
+    def AnalyzeMutationResults(self, file_path: str,mutation_results: str,survived_mutants: typing.List[str],killed_mutants: typing.List[str],mutation_score: float,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlSyncStream[stream_types.MutationReport, types.MutationReport]:
+        ctx, result = self.__options.merge_options(baml_options).create_sync_stream(function_name="AnalyzeMutationResults", args={
+            "file_path": file_path,"mutation_results": mutation_results,"survived_mutants": survived_mutants,"killed_mutants": killed_mutants,"mutation_score": mutation_score,
+        })
+        return baml_py.BamlSyncStream[stream_types.MutationReport, types.MutationReport](
+          result,
+          lambda x: typing.cast(stream_types.MutationReport, x.cast_to(types, types, stream_types, True, __runtime__)),
+          lambda x: typing.cast(types.MutationReport, x.cast_to(types, types, stream_types, False, __runtime__)),
+          ctx,
+        )
     def GenerateCoverageImprovements(self, file_path: str,uncovered_functions: typing.List[str],missing_lines: typing.List[int],current_coverage: float,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.BamlSyncStream[typing.List["stream_types.CoverageImprovement"], typing.List["types.CoverageImprovement"]]:
@@ -156,6 +189,30 @@ class BamlStreamClient:
           result,
           lambda x: typing.cast(typing.List["stream_types.FuzzTestInput"], x.cast_to(types, types, stream_types, True, __runtime__)),
           lambda x: typing.cast(typing.List["types.FuzzTestInput"], x.cast_to(types, types, stream_types, False, __runtime__)),
+          ctx,
+        )
+    def GenerateMutationStrategy(self, file_path: str,function_code: str,existing_tests: str,target_functions: typing.List[str],
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlSyncStream[stream_types.MutationStrategy, types.MutationStrategy]:
+        ctx, result = self.__options.merge_options(baml_options).create_sync_stream(function_name="GenerateMutationStrategy", args={
+            "file_path": file_path,"function_code": function_code,"existing_tests": existing_tests,"target_functions": target_functions,
+        })
+        return baml_py.BamlSyncStream[stream_types.MutationStrategy, types.MutationStrategy](
+          result,
+          lambda x: typing.cast(stream_types.MutationStrategy, x.cast_to(types, types, stream_types, True, __runtime__)),
+          lambda x: typing.cast(types.MutationStrategy, x.cast_to(types, types, stream_types, False, __runtime__)),
+          ctx,
+        )
+    def GenerateTestImprovements(self, function_code: str,surviving_mutants: typing.List[str],current_tests: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlSyncStream[typing.List[str], typing.List[str]]:
+        ctx, result = self.__options.merge_options(baml_options).create_sync_stream(function_name="GenerateTestImprovements", args={
+            "function_code": function_code,"surviving_mutants": surviving_mutants,"current_tests": current_tests,
+        })
+        return baml_py.BamlSyncStream[typing.List[str], typing.List[str]](
+          result,
+          lambda x: typing.cast(typing.List[str], x.cast_to(types, types, stream_types, True, __runtime__)),
+          lambda x: typing.cast(typing.List[str], x.cast_to(types, types, stream_types, False, __runtime__)),
           ctx,
         )
     def GenerateUnitTestCases(self, function_signature: str,function_code: str,framework: str,docstring: str,
@@ -185,6 +242,13 @@ class BamlHttpRequestClient:
             "function_code": function_code,"error_info": error_info,"test_input": test_input,
         }, mode="request")
         return result
+    def AnalyzeMutationResults(self, file_path: str,mutation_results: str,survived_mutants: typing.List[str],killed_mutants: typing.List[str],mutation_score: float,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="AnalyzeMutationResults", args={
+            "file_path": file_path,"mutation_results": mutation_results,"survived_mutants": survived_mutants,"killed_mutants": killed_mutants,"mutation_score": mutation_score,
+        }, mode="request")
+        return result
     def GenerateCoverageImprovements(self, file_path: str,uncovered_functions: typing.List[str],missing_lines: typing.List[int],current_coverage: float,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
@@ -197,6 +261,20 @@ class BamlHttpRequestClient:
     ) -> baml_py.baml_py.HTTPRequest:
         result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GenerateFuzzingInputs", args={
             "function_signature": function_signature,"function_code": function_code,"num_inputs": num_inputs,
+        }, mode="request")
+        return result
+    def GenerateMutationStrategy(self, file_path: str,function_code: str,existing_tests: str,target_functions: typing.List[str],
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GenerateMutationStrategy", args={
+            "file_path": file_path,"function_code": function_code,"existing_tests": existing_tests,"target_functions": target_functions,
+        }, mode="request")
+        return result
+    def GenerateTestImprovements(self, function_code: str,surviving_mutants: typing.List[str],current_tests: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GenerateTestImprovements", args={
+            "function_code": function_code,"surviving_mutants": surviving_mutants,"current_tests": current_tests,
         }, mode="request")
         return result
     def GenerateUnitTestCases(self, function_signature: str,function_code: str,framework: str,docstring: str,
@@ -221,6 +299,13 @@ class BamlHttpStreamRequestClient:
             "function_code": function_code,"error_info": error_info,"test_input": test_input,
         }, mode="stream")
         return result
+    def AnalyzeMutationResults(self, file_path: str,mutation_results: str,survived_mutants: typing.List[str],killed_mutants: typing.List[str],mutation_score: float,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="AnalyzeMutationResults", args={
+            "file_path": file_path,"mutation_results": mutation_results,"survived_mutants": survived_mutants,"killed_mutants": killed_mutants,"mutation_score": mutation_score,
+        }, mode="stream")
+        return result
     def GenerateCoverageImprovements(self, file_path: str,uncovered_functions: typing.List[str],missing_lines: typing.List[int],current_coverage: float,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
@@ -233,6 +318,20 @@ class BamlHttpStreamRequestClient:
     ) -> baml_py.baml_py.HTTPRequest:
         result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GenerateFuzzingInputs", args={
             "function_signature": function_signature,"function_code": function_code,"num_inputs": num_inputs,
+        }, mode="stream")
+        return result
+    def GenerateMutationStrategy(self, file_path: str,function_code: str,existing_tests: str,target_functions: typing.List[str],
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GenerateMutationStrategy", args={
+            "file_path": file_path,"function_code": function_code,"existing_tests": existing_tests,"target_functions": target_functions,
+        }, mode="stream")
+        return result
+    def GenerateTestImprovements(self, function_code: str,surviving_mutants: typing.List[str],current_tests: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GenerateTestImprovements", args={
+            "function_code": function_code,"surviving_mutants": surviving_mutants,"current_tests": current_tests,
         }, mode="stream")
         return result
     def GenerateUnitTestCases(self, function_signature: str,function_code: str,framework: str,docstring: str,

@@ -18,7 +18,7 @@ from .globals import DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIM
 class TypeBuilder(type_builder.TypeBuilder):
     def __init__(self):
         super().__init__(classes=set(
-          ["CoverageImprovement","CrashAnalysis","FuzzTestInput","UnitTestCase",]
+          ["CoverageImprovement","CrashAnalysis","FuzzTestInput","Mutant","MutationOperator","MutationReport","MutationResult","MutationStrategy","UnitTestCase",]
         ), enums=set(
           []
         ), runtime=DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME)
@@ -29,7 +29,7 @@ class TypeBuilder(type_builder.TypeBuilder):
 
 
     # #########################################################################
-    # Generated classes 4
+    # Generated classes 9
     # #########################################################################
 
     @property
@@ -45,6 +45,26 @@ class TypeBuilder(type_builder.TypeBuilder):
         return FuzzTestInputViewer(self)
 
     @property
+    def Mutant(self) -> "MutantViewer":
+        return MutantViewer(self)
+
+    @property
+    def MutationOperator(self) -> "MutationOperatorViewer":
+        return MutationOperatorViewer(self)
+
+    @property
+    def MutationReport(self) -> "MutationReportViewer":
+        return MutationReportViewer(self)
+
+    @property
+    def MutationResult(self) -> "MutationResultViewer":
+        return MutationResultViewer(self)
+
+    @property
+    def MutationStrategy(self) -> "MutationStrategyViewer":
+        return MutationStrategyViewer(self)
+
+    @property
     def UnitTestCase(self) -> "UnitTestCaseViewer":
         return UnitTestCaseViewer(self)
 
@@ -56,7 +76,7 @@ class TypeBuilder(type_builder.TypeBuilder):
 
 
 # #########################################################################
-# Generated classes 4
+# Generated classes 9
 # #########################################################################
 
 class CoverageImprovementAst:
@@ -220,6 +240,317 @@ class FuzzTestInputProperties:
     @property
     def expected_behavior(self) -> type_builder.ClassPropertyViewer:
         return type_builder.ClassPropertyViewer(self.__bldr.property("expected_behavior"))
+    
+    
+
+
+class MutantAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("Mutant")
+        self._properties: typing.Set[str] = set([  "id",  "operator_name",  "original_code",  "mutated_code",  "line_number",  "column_number",  "function_name",  "description",  ])
+        self._props = MutantProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "MutantProperties":
+        return self._props
+
+
+class MutantViewer(MutantAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class MutantProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def id(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("id"))
+    
+    @property
+    def operator_name(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("operator_name"))
+    
+    @property
+    def original_code(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("original_code"))
+    
+    @property
+    def mutated_code(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("mutated_code"))
+    
+    @property
+    def line_number(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("line_number"))
+    
+    @property
+    def column_number(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("column_number"))
+    
+    @property
+    def function_name(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("function_name"))
+    
+    @property
+    def description(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("description"))
+    
+    
+
+
+class MutationOperatorAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("MutationOperator")
+        self._properties: typing.Set[str] = set([  "name",  "description",  "category",  "original_pattern",  "mutated_pattern",  "risk_level",  ])
+        self._props = MutationOperatorProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "MutationOperatorProperties":
+        return self._props
+
+
+class MutationOperatorViewer(MutationOperatorAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class MutationOperatorProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def name(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("name"))
+    
+    @property
+    def description(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("description"))
+    
+    @property
+    def category(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("category"))
+    
+    @property
+    def original_pattern(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("original_pattern"))
+    
+    @property
+    def mutated_pattern(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("mutated_pattern"))
+    
+    @property
+    def risk_level(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("risk_level"))
+    
+    
+
+
+class MutationReportAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("MutationReport")
+        self._properties: typing.Set[str] = set([  "total_mutants",  "killed_mutants",  "survived_mutants",  "timeout_mutants",  "error_mutants",  "mutation_score",  "function_scores",  "weak_areas",  "improvement_suggestions",  ])
+        self._props = MutationReportProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "MutationReportProperties":
+        return self._props
+
+
+class MutationReportViewer(MutationReportAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class MutationReportProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def total_mutants(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("total_mutants"))
+    
+    @property
+    def killed_mutants(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("killed_mutants"))
+    
+    @property
+    def survived_mutants(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("survived_mutants"))
+    
+    @property
+    def timeout_mutants(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("timeout_mutants"))
+    
+    @property
+    def error_mutants(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("error_mutants"))
+    
+    @property
+    def mutation_score(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("mutation_score"))
+    
+    @property
+    def function_scores(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("function_scores"))
+    
+    @property
+    def weak_areas(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("weak_areas"))
+    
+    @property
+    def improvement_suggestions(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("improvement_suggestions"))
+    
+    
+
+
+class MutationResultAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("MutationResult")
+        self._properties: typing.Set[str] = set([  "mutant_id",  "status",  "execution_time_ms",  "test_output",  "failing_tests",  "error_message",  ])
+        self._props = MutationResultProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "MutationResultProperties":
+        return self._props
+
+
+class MutationResultViewer(MutationResultAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class MutationResultProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def mutant_id(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("mutant_id"))
+    
+    @property
+    def status(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("status"))
+    
+    @property
+    def execution_time_ms(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("execution_time_ms"))
+    
+    @property
+    def test_output(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("test_output"))
+    
+    @property
+    def failing_tests(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("failing_tests"))
+    
+    @property
+    def error_message(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("error_message"))
+    
+    
+
+
+class MutationStrategyAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("MutationStrategy")
+        self._properties: typing.Set[str] = set([  "target_functions",  "recommended_operators",  "priority_areas",  "expected_mutant_count",  "rationale",  ])
+        self._props = MutationStrategyProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "MutationStrategyProperties":
+        return self._props
+
+
+class MutationStrategyViewer(MutationStrategyAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class MutationStrategyProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def target_functions(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("target_functions"))
+    
+    @property
+    def recommended_operators(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("recommended_operators"))
+    
+    @property
+    def priority_areas(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("priority_areas"))
+    
+    @property
+    def expected_mutant_count(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("expected_mutant_count"))
+    
+    @property
+    def rationale(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("rationale"))
     
     
 

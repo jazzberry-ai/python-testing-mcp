@@ -28,6 +28,12 @@ class LlmResponseParser:
         result = self.__options.merge_options(baml_options).parse_response(function_name="AnalyzeCrash", llm_response=llm_response, mode="request")
         return typing.cast(types.CrashAnalysis, result)
 
+    def AnalyzeMutationResults(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> types.MutationReport:
+        result = self.__options.merge_options(baml_options).parse_response(function_name="AnalyzeMutationResults", llm_response=llm_response, mode="request")
+        return typing.cast(types.MutationReport, result)
+
     def GenerateCoverageImprovements(
         self, llm_response: str, baml_options: BamlCallOptions = {},
     ) -> typing.List["types.CoverageImprovement"]:
@@ -39,6 +45,18 @@ class LlmResponseParser:
     ) -> typing.List["types.FuzzTestInput"]:
         result = self.__options.merge_options(baml_options).parse_response(function_name="GenerateFuzzingInputs", llm_response=llm_response, mode="request")
         return typing.cast(typing.List["types.FuzzTestInput"], result)
+
+    def GenerateMutationStrategy(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> types.MutationStrategy:
+        result = self.__options.merge_options(baml_options).parse_response(function_name="GenerateMutationStrategy", llm_response=llm_response, mode="request")
+        return typing.cast(types.MutationStrategy, result)
+
+    def GenerateTestImprovements(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> typing.List[str]:
+        result = self.__options.merge_options(baml_options).parse_response(function_name="GenerateTestImprovements", llm_response=llm_response, mode="request")
+        return typing.cast(typing.List[str], result)
 
     def GenerateUnitTestCases(
         self, llm_response: str, baml_options: BamlCallOptions = {},
@@ -60,6 +78,12 @@ class LlmStreamParser:
         result = self.__options.merge_options(baml_options).parse_response(function_name="AnalyzeCrash", llm_response=llm_response, mode="stream")
         return typing.cast(stream_types.CrashAnalysis, result)
 
+    def AnalyzeMutationResults(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> stream_types.MutationReport:
+        result = self.__options.merge_options(baml_options).parse_response(function_name="AnalyzeMutationResults", llm_response=llm_response, mode="stream")
+        return typing.cast(stream_types.MutationReport, result)
+
     def GenerateCoverageImprovements(
         self, llm_response: str, baml_options: BamlCallOptions = {},
     ) -> typing.List["stream_types.CoverageImprovement"]:
@@ -71,6 +95,18 @@ class LlmStreamParser:
     ) -> typing.List["stream_types.FuzzTestInput"]:
         result = self.__options.merge_options(baml_options).parse_response(function_name="GenerateFuzzingInputs", llm_response=llm_response, mode="stream")
         return typing.cast(typing.List["stream_types.FuzzTestInput"], result)
+
+    def GenerateMutationStrategy(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> stream_types.MutationStrategy:
+        result = self.__options.merge_options(baml_options).parse_response(function_name="GenerateMutationStrategy", llm_response=llm_response, mode="stream")
+        return typing.cast(stream_types.MutationStrategy, result)
+
+    def GenerateTestImprovements(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> typing.List[str]:
+        result = self.__options.merge_options(baml_options).parse_response(function_name="GenerateTestImprovements", llm_response=llm_response, mode="stream")
+        return typing.cast(typing.List[str], result)
 
     def GenerateUnitTestCases(
         self, llm_response: str, baml_options: BamlCallOptions = {},
