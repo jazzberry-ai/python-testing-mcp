@@ -13,6 +13,7 @@ import time
 
 from .analyzer import CodeAnalyzer, FunctionInfo
 from .gemini_client import GeminiClient
+from .baml_client import BamlGeminiClient
 
 
 @dataclass
@@ -40,13 +41,25 @@ class FuzzReport:
 class PythonFuzzer:
     """Main fuzzing engine for Python functions."""
     
-    def __init__(self, gemini_api_key: Optional[str] = None):
+    def __init__(self, gemini_api_key: Optional[str] = None, use_baml: bool = True):
         """Initialize the fuzzer.
         
         Args:
             gemini_api_key: Gemini API key for generating test inputs
+            use_baml: Whether to use BAML for structured responses (default: True)
         """
-        self.gemini_client = GeminiClient(gemini_api_key)
+        if use_baml:
+            try:
+                self.gemini_client = BamlGeminiClient(gemini_api_key)
+                self.using_baml = True
+            except Exception as e:
+                print(f"Warning: Failed to initialize BAML client, falling back to basic client: {e}")
+                self.gemini_client = GeminiClient(gemini_api_key)
+                self.using_baml = False
+        else:
+            self.gemini_client = GeminiClient(gemini_api_key)
+            self.using_baml = False
+        
         self.analyzer = None
         self.target_module = None
     
