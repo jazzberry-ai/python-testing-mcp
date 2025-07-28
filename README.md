@@ -18,6 +18,27 @@ AI-powered fuzzing tool that automatically generates comprehensive test inputs f
 - **📊 Detailed Reporting**: Comprehensive test results with success rates and insights
 - **🛡️ Error-Tolerant Parsing**: Robust handling of malformed AI responses
 
+### 🧬 Mutation Testing Suite
+Comprehensive mutation testing framework that evaluates test suite quality by introducing artificial bugs (mutants) and measuring how many are detected by your tests. This advanced testing technique provides deep insights into test effectiveness.
+
+**Key Features:**
+- **🎯 Intelligent Mutant Generation**: Creates realistic code mutations using 9+ mutation operators
+- **📊 Quality Assessment**: Mutation score calculation and detailed test quality metrics
+- **🤖 AI-Powered Analysis**: Advanced insights into test weaknesses and improvement strategies
+- **🛡️ Production-Safe**: Isolated execution environment with automatic cleanup
+- **⚡ Configurable Execution**: Customizable test commands, timeouts, and targeting options
+- **💡 Actionable Insights**: Specific recommendations for improving test coverage and quality
+
+### 🧪 Unit Test Generator
+Automated unit test generation tool that creates comprehensive test suites for Python code using AI-powered analysis. Generates production-ready test files with proper fixtures, edge cases, and error handling.
+
+**Key Features:**
+- **📝 Complete Test Files**: Generates ready-to-run test files with pytest or unittest frameworks
+- **🎯 Intelligent Test Cases**: AI-generated tests covering normal, edge, and error scenarios
+- **🔍 Coverage Gap Analysis**: Identifies missing test coverage and suggests specific improvements
+- **📋 Multiple Frameworks**: Support for pytest and unittest testing frameworks
+- **🤖 Context-Aware**: Understands code patterns and generates appropriate test strategies
+
 ### 📈 Python Coverage Analyzer
 Comprehensive code coverage analysis tool that integrates with existing Python testing frameworks to provide detailed coverage insights and improvement suggestions.
 
@@ -152,14 +173,27 @@ The primary interface for this testing toolkit is through the MCP (Model Context
 }
 ```
 
-#### Available MCP Tools
+#### Available MCP Tools (13 Total)
 
-**Python Fuzzing Tools:**
-- `fuzz_python_file`: Comprehensive fuzzing of all functions in a Python file
+**🔍 Code Analysis:**
 - `analyze_python_code`: Code structure analysis and function extraction
+
+**🎯 Fuzzing & Test Generation:**
+- `fuzz_python_file`: Comprehensive fuzzing of all functions in a Python file
 - `generate_test_inputs`: AI-powered test case generation for specific functions
 
-**Python Coverage Tools:**
+**🧬 Mutation Testing:**
+- `run_python_mutation_tests`: Run comprehensive mutation tests to assess test quality
+- `analyze_mutation_results`: AI-powered analysis of mutation testing results
+- `generate_mutation_strategy`: Generate optimal mutation testing strategies
+- `suggest_mutation_test_improvements`: Get specific recommendations for test improvements
+
+**🧪 Unit Test Generation:**
+- `generate_unit_tests`: Generate complete test files with comprehensive test cases
+- `generate_test_file_content`: Generate test file content without saving to disk
+- `analyze_test_coverage_gaps`: Identify missing test coverage and suggest improvements
+
+**📊 Coverage Analysis:**
 - `run_python_coverage`: Execute coverage analysis with configurable test commands
 - `analyze_coverage_report`: Parse and analyze existing coverage JSON reports
 - `suggest_coverage_improvements`: Generate targeted recommendations for improving coverage
@@ -173,9 +207,22 @@ Once configured with an AI client, you can use natural language commands like:
 Please fuzz test the file main.py with 10 test cases per function
 ```
 
+**Mutation Testing:**
+```
+Run mutation tests on my calculator.py file and analyze the results
+Generate a mutation testing strategy for my authentication module
+```
+
+**Unit Test Generation:**
+```
+Generate comprehensive unit tests for my utils.py file using pytest
+Analyze test coverage gaps in my data_processor.py file
+```
+
 **Coverage Analysis:**
 ```
 Run coverage analysis on my src/ directory and suggest improvements
+Analyze my existing coverage report and provide insights
 ```
 
 **Code Analysis:**
@@ -251,6 +298,21 @@ The project is organized with a modular architecture:
     - **`gemini_client.py`**: AI API communication with error-tolerant parsing
     - **`fuzzer.py`**: Core fuzzing logic and test execution
     - **`tool.py`**: MCP integration for the fuzzer tool
+  - **`mutation/`**: Mutation testing framework
+    - **`mutator.py`**: Safe mutation engine with 9+ operators
+    - **`operators.py`**: Collection of mutation operators
+    - **`runner.py`**: Mutation test execution and reporting
+    - **`baml_client.py`**: BAML-powered AI analysis
+    - **`tool.py`**: MCP integration for mutation testing
+  - **`unittest/`**: Unit test generation toolkit
+    - **`generator.py`**: AI-powered test case generation
+    - **`baml_client.py`**: BAML client for test generation
+    - **`tool.py`**: MCP integration for unit test generation
+  - **`coverage/`**: Coverage analysis tools
+    - **`analyzer.py`**: Coverage data analysis and reporting
+    - **`runner.py`**: Coverage execution and data collection
+    - **`tool.py`**: MCP integration for coverage analysis
+- **`baml_src/`**: BAML configuration for AI model interactions
 - **`mcp_server.py`**: MCP server that routes requests to appropriate tools
 - **`main.py`**: Command-line interface for standalone tool usage
 
@@ -337,12 +399,22 @@ python mcp_server.py                    # Run with python directly
    - Operating system
    - Steps to reproduce
 
+## Recent Major Updates
+
+### ✨ What's New (Latest Release)
+- **🧬 Mutation Testing Suite**: Complete mutation testing framework with 9+ operators
+- **🧪 Unit Test Generator**: AI-powered test file generation with pytest/unittest support
+- **🤖 BAML Integration**: Advanced AI model interactions with multi-provider fallback
+- **🛡️ Production Safety**: Bulletproof safety guarantees with isolated execution
+- **📊 Enhanced Analysis**: Deeper insights and actionable improvement recommendations
+- **🎯 13 MCP Tools**: Comprehensive testing toolkit with specialized capabilities
+
 ## Current Limitations & Roadmap
 
 ### Current Limitations
 - **Language Support**: Currently focused on Python (JavaScript, Go, Rust support planned)
-- **AI Dependency**: Some features require API keys for cloud-based AI models
-- **Integration Scope**: Individual function testing (end-to-end testing tools planned)
+- **AI Dependency**: Some features require API keys for cloud-based AI models (local models planned)
+- **Integration Scope**: Individual function and unit testing (end-to-end testing tools planned)
 - **Advanced Features**: Some Python language features may need additional support
 
 ### Planned Enhancements
@@ -352,6 +424,7 @@ python mcp_server.py                    # Run with python directly
 - **🔐 Security Testing**: Static analysis and vulnerability scanning tools
 - **📊 Test Management**: Test suite organization and execution management
 - **🤖 Local AI Models**: Support for local/offline AI model execution
+- **🚀 CI/CD Integration**: GitHub Actions, Jenkins, and other CI/CD platform support
 
 ## Contributing to the Testing Ecosystem
 
