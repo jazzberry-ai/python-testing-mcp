@@ -1,29 +1,43 @@
-# Software Testing MCP
+# Software Testing MCP Server
 
-A comprehensive testing toolkit that provides multiple AI-powered testing tools for software quality assurance. Currently includes an intelligent Python fuzzing tool with plans for additional testing capabilities.
+An open-source Model Context Protocol (MCP) server that provides AI agents with access to professional software testing tools and techniques. This extensible testing toolkit enables AI assistants like Claude, Cursor, and other MCP-compatible clients to perform comprehensive software quality assurance tasks.
 
-## Available Tools
+## Vision
 
-### Python Fuzzer
-An intelligent fuzzing tool that uses Google's Gemini AI to automatically generate comprehensive test inputs for Python functions. This tool analyzes Python code, extracts functions, and uses AI to create diverse test cases including edge cases, boundary conditions, and error conditions.
+We're building a comprehensive testing ecosystem that bridges the gap between AI capabilities and established software testing methodologies. By providing AI agents with access to industry-standard testing tools through a unified MCP interface, we enable intelligent, automated testing workflows that combine human expertise with AI-powered analysis.
 
-### Python Fuzzer Features
+## Available Testing Tools
 
-- **🤖 AI-Powered Test Generation**: Uses Google Gemini to create intelligent, diverse test inputs
-- **🔍 Automatic Function Discovery**: Analyzes Python files to find testable functions automatically
-- **💥 Crash Analysis**: Provides AI-powered analysis of crashes and failures with suggested fixes
-- **📊 Comprehensive Reporting**: Generates detailed reports showing success rates and crash analysis
-- **🖥️ Command-Line Interface**: Easy-to-use CLI for fuzzing any Python file
-- **🛡️ Error-Tolerant Parsing**: Uses BAML-inspired techniques to handle malformed AI responses
+### 🎯 Python Fuzzer
+AI-powered fuzzing tool that automatically generates comprehensive test inputs for Python functions. Uses advanced language models to create intelligent test cases covering edge cases, boundary conditions, and error scenarios.
 
-## Architecture
+**Key Features:**
+- **🤖 AI-Generated Test Cases**: Leverages Google Gemini for intelligent test input generation
+- **🔍 Automatic Function Discovery**: Analyzes Python files to identify testable functions
+- **💥 Crash Analysis**: AI-powered analysis of failures with improvement suggestions
+- **📊 Detailed Reporting**: Comprehensive test results with success rates and insights
+- **🛡️ Error-Tolerant Parsing**: Robust handling of malformed AI responses
 
-The project is designed with a modular architecture to support multiple testing tools:
+### 📈 Python Coverage Analyzer
+Comprehensive code coverage analysis tool that integrates with existing Python testing frameworks to provide detailed coverage insights and improvement suggestions.
 
-- **🔧 MCP Server Support**: Integrates with MCP-compatible clients like Claude, Cursor, and more
-- **🏗️ Modular Tool System**: Each testing tool is self-contained and discoverable
-- **📋 Tool Registry**: Dynamic discovery and registration of available testing tools
-- **🔌 Extensible Design**: Easy to add new testing tools without modifying existing code
+**Key Features:**
+- **📊 Coverage Analysis**: Detailed line, branch, and function coverage reporting
+- **🔍 Gap Identification**: Automatically identifies critical coverage gaps
+- **💡 Test Suggestions**: AI-powered recommendations for improving test coverage
+- **📈 Coverage Tracking**: Historical coverage analysis and trend monitoring
+- **🎯 Targeted Testing**: Prioritized suggestions based on code criticality
+
+## MCP Server Architecture
+
+Built as a Model Context Protocol server with a plugin-based architecture that makes it easy to add new testing capabilities:
+
+- **🔧 MCP Integration**: Native support for Claude, Cursor, and other MCP-compatible AI clients
+- **🏗️ Plugin Architecture**: Self-contained testing tools with automatic discovery
+- **📋 Tool Registry**: Dynamic tool registration and routing system
+- **🔌 Extensible Framework**: Add new testing tools without modifying core server code
+- **⚡ Async Operations**: Non-blocking execution for better performance
+- **🛡️ Error Handling**: Robust error management and graceful failure recovery
 
 ## Installation
 
@@ -104,7 +118,7 @@ python main.py example.py --api-key your_actual_api_key
 
 ### MCP Server Integration
 
-This tool can also run as an MCP (Model Context Protocol) server, integrating with AI assistants like Claude, Cursor, and other MCP-compatible clients.
+The primary interface for this testing toolkit is through the MCP (Model Context Protocol) server, which enables seamless integration with AI assistants like Claude, Cursor, and other MCP-compatible clients. This allows AI agents to leverage professional testing tools directly in their workflows.
 
 #### Setup for MCP Clients
 
@@ -140,18 +154,36 @@ This tool can also run as an MCP (Model Context Protocol) server, integrating wi
 
 #### Available MCP Tools
 
-- `fuzz_python_file`: Fuzz test all functions in a Python file
-- `analyze_python_code`: Analyze Python code structure and extract function information  
-- `generate_test_inputs`: Generate AI-powered test inputs for specific functions
+**Python Fuzzing Tools:**
+- `fuzz_python_file`: Comprehensive fuzzing of all functions in a Python file
+- `analyze_python_code`: Code structure analysis and function extraction
+- `generate_test_inputs`: AI-powered test case generation for specific functions
 
-#### MCP Usage Example
+**Python Coverage Tools:**
+- `run_python_coverage`: Execute coverage analysis with configurable test commands
+- `analyze_coverage_report`: Parse and analyze existing coverage JSON reports
+- `suggest_coverage_improvements`: Generate targeted recommendations for improving coverage
 
-Once configured, you can use commands like:
+#### MCP Usage Examples
+
+Once configured with an AI client, you can use natural language commands like:
+
+**Fuzzing:**
 ```
 Please fuzz test the file main.py with 10 test cases per function
 ```
 
-The MCP server will automatically handle the fuzzing and return comprehensive results.
+**Coverage Analysis:**
+```
+Run coverage analysis on my src/ directory and suggest improvements
+```
+
+**Code Analysis:**
+```
+Analyze the Python file utils.py and show me its function structure
+```
+
+The MCP server automatically routes requests to the appropriate testing tools and returns comprehensive, formatted results.
 
 ### Example Output
 
@@ -222,13 +254,24 @@ The project is organized with a modular architecture:
 - **`mcp_server.py`**: MCP server that routes requests to appropriate tools
 - **`main.py`**: Command-line interface for standalone tool usage
 
-### Adding New Tools
+### Adding New Testing Tools
 
-To add a new testing tool:
-1. Create a new directory under `tools/` (e.g., `tools/my_tool/`)
-2. Implement the tool following the `BaseTool` interface
-3. Create a `tool.py` file with a `get_tool()` function
-4. The tool will be automatically discovered and registered
+The modular architecture makes it simple to extend the server with new testing capabilities:
+
+1. **Create Tool Directory**: Add a new directory under `tools/` (e.g., `tools/my_testing_tool/`)
+2. **Implement BaseTool Interface**: Follow the `BaseTool` abstract class contract
+3. **Define MCP Tools**: Specify the MCP tool definitions your tool provides
+4. **Add Entry Point**: Create a `tool.py` file with a `get_tool()` function
+5. **Automatic Discovery**: The tool registry will automatically discover and register your tool
+
+**Example Tool Structure:**
+```
+tools/my_testing_tool/
+├── __init__.py
+├── tool.py          # MCP integration
+├── analyzer.py      # Core functionality
+└── runner.py        # Test execution
+```
 
 ## Testing
 
@@ -294,22 +337,38 @@ python mcp_server.py                    # Run with python directly
    - Operating system
    - Steps to reproduce
 
-## Limitations
+## Current Limitations & Roadmap
 
-- **API Dependency**: Requires a Google Gemini API key for AI-powered features
-- **Function Scope**: Tests individual functions, not complex workflows or integrations
-- **Language Features**: May not handle all Python features (decorators, async functions, metaclasses)
-- **AI Quality**: Test quality depends on AI model capabilities and prompt effectiveness
-- **Rate Limits**: Subject to Gemini API rate limits and quotas
+### Current Limitations
+- **Language Support**: Currently focused on Python (JavaScript, Go, Rust support planned)
+- **AI Dependency**: Some features require API keys for cloud-based AI models
+- **Integration Scope**: Individual function testing (end-to-end testing tools planned)
+- **Advanced Features**: Some Python language features may need additional support
 
-## Contributing
+### Planned Enhancements
+- **📝 Multi-Language Support**: JavaScript, TypeScript, Go, Rust testing tools
+- **🔄 Integration Testing**: End-to-end and integration testing capabilities
+- **🎯 Performance Testing**: Load testing and performance analysis tools
+- **🔐 Security Testing**: Static analysis and vulnerability scanning tools
+- **📊 Test Management**: Test suite organization and execution management
+- **🤖 Local AI Models**: Support for local/offline AI model execution
 
-We welcome contributions! This project is designed to be easy to understand and extend.
+## Contributing to the Testing Ecosystem
 
-- **Getting Started**: See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines
-- **Good First Issues**: Look for issues labeled "good first issue"
-- **Code of Conduct**: Be respectful and constructive in all interactions
-- **Development Setup**: Follow the contributing guide for environment setup
+We're building an open-source community around AI-powered software testing. Whether you're interested in testing methodologies, AI integration, or developer tooling, there are many ways to contribute:
+
+### Ways to Contribute
+- **🔧 Tool Development**: Create new testing tools for different languages or methodologies
+- **🤖 AI Integration**: Improve AI model integration and prompt engineering
+- **📚 Documentation**: Help document testing best practices and tool usage
+- **🐛 Bug Reports**: Report issues and help improve tool reliability
+- **💡 Feature Requests**: Suggest new testing capabilities and improvements
+
+### Getting Started
+- **Setup Guide**: See [CONTRIBUTING.md](CONTRIBUTING.md) for development environment setup
+- **Architecture Guide**: Understand the MCP server and tool registry architecture
+- **Good First Issues**: Look for issues labeled "good first issue" and "help wanted"
+- **Community**: Join discussions about software testing automation and AI integration
 
 ## License
 
