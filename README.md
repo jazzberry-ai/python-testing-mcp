@@ -1,16 +1,29 @@
-# Python AI Fuzzing Tool
+# Software Testing Agent
 
+A comprehensive testing toolkit that provides multiple AI-powered testing tools for software quality assurance. Currently includes an intelligent Python fuzzing tool with plans for additional testing capabilities.
+
+## Available Tools
+
+### Python Fuzzer
 An intelligent fuzzing tool that uses Google's Gemini AI to automatically generate comprehensive test inputs for Python functions. This tool analyzes Python code, extracts functions, and uses AI to create diverse test cases including edge cases, boundary conditions, and error conditions.
 
-## Features
+### Python Fuzzer Features
 
 - **🤖 AI-Powered Test Generation**: Uses Google Gemini to create intelligent, diverse test inputs
 - **🔍 Automatic Function Discovery**: Analyzes Python files to find testable functions automatically
 - **💥 Crash Analysis**: Provides AI-powered analysis of crashes and failures with suggested fixes
 - **📊 Comprehensive Reporting**: Generates detailed reports showing success rates and crash analysis
 - **🖥️ Command-Line Interface**: Easy-to-use CLI for fuzzing any Python file
-- **🔧 MCP Server Support**: Integrates with MCP-compatible clients like Claude, Cursor, and more
 - **🛡️ Error-Tolerant Parsing**: Uses BAML-inspired techniques to handle malformed AI responses
+
+## Architecture
+
+The project is designed with a modular architecture to support multiple testing tools:
+
+- **🔧 MCP Server Support**: Integrates with MCP-compatible clients like Claude, Cursor, and more
+- **🏗️ Modular Tool System**: Each testing tool is self-contained and discoverable
+- **📋 Tool Registry**: Dynamic discovery and registration of available testing tools
+- **🔌 Extensible Design**: Easy to add new testing tools without modifying existing code
 
 ## Installation
 
@@ -194,19 +207,28 @@ Per-function results:
 5. **Crash Analysis**: Any crashes are analyzed by Gemini to provide insights on root causes and potential fixes
 6. **Reporting**: Comprehensive reports show success rates, crash details, and AI-powered analysis
 
-## Architecture
+## Project Structure
 
-The tool consists of several key components:
+The project is organized with a modular architecture:
 
 ### Core Components
-- **`analyzer.py`**: Parses Python code using AST and extracts function information
-- **`gemini_client.py`**: Handles Gemini API communication with error-tolerant JSON parsing
-- **`fuzzer.py`**: Core fuzzing logic, test execution, and crash analysis
-- **`main.py`**: Command-line interface and argument parsing
+- **`tools/`**: Main directory containing all testing tools
+  - **`registry.py`**: Tool discovery and registration system
+  - **`fuzzer/`**: Python fuzzing tool implementation
+    - **`analyzer.py`**: Python code analysis and AST parsing
+    - **`gemini_client.py`**: AI API communication with error-tolerant parsing
+    - **`fuzzer.py`**: Core fuzzing logic and test execution
+    - **`tool.py`**: MCP integration for the fuzzer tool
+- **`mcp_server.py`**: MCP server that routes requests to appropriate tools
+- **`main.py`**: Command-line interface for standalone tool usage
 
-### Integration Components  
-- **`mcp_server.py`**: MCP (Model Context Protocol) server for AI assistant integration
-- **`local_fuzz_test.py`**: Local testing script that doesn't require API access
+### Adding New Tools
+
+To add a new testing tool:
+1. Create a new directory under `tools/` (e.g., `tools/my_tool/`)
+2. Implement the tool following the `BaseTool` interface
+3. Create a `tool.py` file with a `get_tool()` function
+4. The tool will be automatically discovered and registered
 
 ## Testing
 
