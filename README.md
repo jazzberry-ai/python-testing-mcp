@@ -1,4 +1,4 @@
-# Software Testing Agent
+# Software Testing MCP
 
 A comprehensive testing toolkit that provides multiple AI-powered testing tools for software quality assurance. Currently includes an intelligent Python fuzzing tool with plans for additional testing capabilities.
 
