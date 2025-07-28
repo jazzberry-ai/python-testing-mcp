@@ -80,3 +80,5 @@ output/
 !*_config.json
 !requirements.txt
 !package.json
+
+.claude_note.md
