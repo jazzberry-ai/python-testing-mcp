@@ -1,6 +1,5 @@
 {
-  "version": "1.0",
-  "servers": {
+  "mcpServers": {
     "python-fuzzing-tool": {
       "command": "python",
       "args": ["/path/to/your/software-testing-agent/mcp_server.py"],
