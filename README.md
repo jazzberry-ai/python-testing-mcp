@@ -335,9 +335,93 @@ tools/my_testing_tool/
 └── runner.py        # Test execution
 ```
 
-## Testing
+## Developer Testing
 
-Run the included tests:
+For developers working on the codebase, we provide comprehensive testing tools to validate your development environment and tool implementations.
+
+### Quick Development Validation
+
+Run the developer testing script to validate your setup:
+
+```bash
+# Run all development tests
+python dev_test.py
+
+# Quick validation (recommended for frequent testing)
+python dev_test.py --quick
+
+# Test only specific components
+python dev_test.py --baml-only      # Test BAML integration
+python dev_test.py --tools-only     # Test tool implementations  
+python dev_test.py --mcp-only       # Test MCP server
+
+# Verbose output for debugging
+python dev_test.py --verbose
+```
+
+### What the Developer Tests Cover
+
+**🏗️ Project Structure**: Validates all required files exist
+**🤖 BAML Integration**: Tests AI client setup and schema validation  
+**🔧 Tool Registry**: Validates tool discovery and MCP integration
+**🧪 Sample Functionality**: Tests core logic with sample data
+**🖥️ MCP Server**: Tests server initialization and tool routing
+**📦 Dependencies**: Validates all required packages are installed
+**🌍 Environment**: Checks Python version and API key setup
+
+### Sample Testing Data
+
+Use the provided sample module for testing your tools:
+
+```bash
+# Test fuzzing with sample data
+python main.py test_samples/sample_module.py --num-tests 5
+
+# Generate unit tests for sample module
+# (via MCP client): "Generate unit tests for test_samples/sample_module.py"
+
+# Run mutation tests on sample module  
+# (via MCP client): "Run mutation tests on test_samples/sample_module.py"
+```
+
+The `test_samples/sample_module.py` includes:
+- **Simple functions** (add, divide) for basic testing
+- **Complex algorithms** with multiple branches and edge cases
+- **Class methods** for testing object-oriented code
+- **Error handling patterns** for exception testing
+- **Type hints and documentation** for comprehensive analysis
+
+### Development Workflow
+
+```bash
+# 1. Set up development environment
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+# 2. Run development tests after changes
+python dev_test.py --quick
+
+# 3. Test specific functionality you're working on
+python dev_test.py --tools-only     # When working on tools
+python dev_test.py --baml-only      # When working on AI integration
+
+# 4. Run full test suite before committing
+python dev_test.py --verbose
+```
+
+### Test Results Interpretation
+
+The developer test script provides colored output:
+- ✅ **Green**: Tests passed successfully
+- ❌ **Red**: Tests failed - needs attention  
+- ⚠️ **Yellow**: Warnings - may impact functionality
+- ℹ️ **Blue**: Informational messages (verbose mode)
+
+**Success Criteria**: All tests should pass for a healthy development environment. If tests fail, the script provides specific error details and suggestions for resolution.
+
+### Legacy Testing
+
+Run the included pytest test suite:
 ```bash
 python -m pytest test_example.py -v
 ```
