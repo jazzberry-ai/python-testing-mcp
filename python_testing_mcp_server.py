@@ -6,7 +6,7 @@ from fastmcp import FastMCP
 from unit_test_generator import generate_unit_tests
 from fuzz_tester import fuzz_test_function
 
-mcp = FastMCP(name="software_testing_tools")
+mcp = FastMCP(name="python_testing_tools")
 
 @mcp.tool
 def generate_unit_tests_tool(file_path: str) -> str:

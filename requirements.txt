@@ -1,0 +1,8 @@
+fastmcp
+google-generativeai
+uv
+pytest
+black
+isort
+mypy
+
