@@ -158,6 +158,15 @@ class MutationTestingTool(BaseTool):
             }
         ]
     
+    def can_handle(self, tool_name: str) -> bool:
+        """Check if the mutation testing tool can handle the given tool name."""
+        return tool_name in [
+            "run_python_mutation_tests",
+            "analyze_mutation_results",
+            "generate_mutation_strategy",
+            "suggest_mutation_test_improvements"
+        ]
+
     async def handle_mcp_call(self, tool_name: str, arguments: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Handle MCP tool calls for mutation testing."""
         try:

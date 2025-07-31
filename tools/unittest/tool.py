@@ -99,6 +99,10 @@ class UnitTestTool(BaseTool):
             }
         ]
     
+    def can_handle(self, tool_name: str) -> bool:
+        """Check if the unit test tool can handle the given tool name."""
+        return tool_name in ["generate_unit_tests", "generate_test_file_content", "analyze_test_coverage_gaps"]
+
     async def handle_mcp_call(self, tool_name: str, arguments: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Handle MCP tool calls."""
         try:
@@ -109,7 +113,8 @@ class UnitTestTool(BaseTool):
             elif tool_name == "analyze_test_coverage_gaps":
                 return await self._analyze_test_coverage_gaps(arguments)
             else:
-                raise NotImplementedError(f"Tool {tool_name} not implemented")
+                # This case should ideally not be reached if can_handle is used correctly
+                raise ValueError(f"Tool {tool_name} not implemented by unit test tool")
         except Exception as e:
             return [{"text": f"Error in {tool_name}: {str(e)}"}]
     

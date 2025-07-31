@@ -133,6 +133,17 @@ class GeminiClient:
                 continue
         
         return objects
+
+    def _validate_and_convert_args(self, args: list) -> list:
+        """Validate and convert arguments to BAML-compatible types."""
+        validated_args = []
+        for arg in args:
+            if isinstance(arg, (str, int, float, bool)) or arg is None:
+                validated_args.append(arg)
+            else:
+                # Convert other types to string as a fallback
+                validated_args.append(str(arg))
+        return validated_args
     
     def generate_fuzzing_inputs(self, function_signature: str, function_code: str, num_inputs: int = 10) -> List[Dict[str, Any]]:
         """Generate fuzzing inputs for a Python function.
@@ -196,11 +207,16 @@ class GeminiClient:
             
             # Use error-tolerant JSON parser
             inputs = self._parse_json_tolerant(response.text)
+            
+            # Validate and convert args to be BAML-compatible
+            for test_input in inputs:
+                if 'args' in test_input and isinstance(test_input['args'], list):
+                    test_input['args'] = self._validate_and_convert_args(test_input['args'])
+            
             return inputs
             
         except Exception as e:
             print(f"Error generating fuzzing inputs: {e}")
-            print(f"Raw response (first 500 chars): {response.text[:500]}...")
             return []
     
     def analyze_crash(self, function_code: str, error_info: str, test_input: Dict[str, Any]) -> str:

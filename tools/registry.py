@@ -37,6 +37,12 @@ class BaseTool(ABC):
         pass
     
     @abstractmethod
+    @abstractmethod
+    def can_handle(self, tool_name: str) -> bool:
+        """Check if the tool can handle the given tool name."""
+        pass
+
+    @abstractmethod
     async def handle_mcp_call(self, tool_name: str, arguments: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Handle MCP tool calls for this tool."""
         pass
@@ -70,11 +76,9 @@ class ToolRegistry:
     
     async def handle_mcp_call(self, tool_name: str, arguments: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Route MCP calls to the appropriate tool."""
-        for tool in self._tools.values():
-            try:
-                return await tool.handle_mcp_call(tool_name, arguments)
-            except NotImplementedError:
-                continue
+        for tool_instance in self._tools.values():
+            if tool_instance.can_handle(tool_name):
+                return await tool_instance.handle_mcp_call(tool_name, arguments)
         
         raise ValueError(f"Unknown tool: {tool_name}")
     

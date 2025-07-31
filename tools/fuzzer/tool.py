@@ -112,6 +112,10 @@ class PythonFuzzerTool(BaseTool):
             }
         ]
     
+    def can_handle(self, tool_name: str) -> bool:
+        """Check if the fuzzer tool can handle the given tool name."""
+        return tool_name in ["fuzz_python_file", "analyze_python_code", "generate_test_inputs"]
+
     async def handle_mcp_call(self, tool_name: str, arguments: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Handle MCP tool calls for the fuzzer."""
         # Check for API key
@@ -136,7 +140,8 @@ class PythonFuzzerTool(BaseTool):
                 return await self._generate_test_inputs(args, api_key)
             
             else:
-                raise NotImplementedError(f"Tool {tool_name} not handled by fuzzer")
+                # This case should ideally not be reached if can_handle is used correctly
+                raise ValueError(f"Tool {tool_name} not handled by fuzzer")
         
         except Exception as e:
             return [{
