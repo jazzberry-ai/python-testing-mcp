@@ -129,10 +129,10 @@ Check if the MCP server is connected:
 
 Test the unit test generation tool:
 ```bash
-create unit tests for @demo/example_functions.py
+create unit tests for @demo/basic_example_functions.py
 ```
 
-This should create a file called `test_example_functions.py` in the demo folder.
+This should create a file called `test_basic_example_functions.py` in the demo folder.
 
 ## Available Tools
 
