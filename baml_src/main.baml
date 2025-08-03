@@ -40,15 +40,16 @@ function GenerateTests(source_code: string) -> PythonTestFile {
     {{ source_code }}
     ---
 
-    Generate 3-5 different test cases covering:
+    Generate 4-6 different test cases covering:
     1. Normal/positive cases
     2. Edge cases (zero, empty, boundary values)
-    3. Negative cases if applicable
-    4. Different data types if the function supports them
+    3. Different data types if the function supports them
+    4. Error cases that should raise exceptions (use self.assertRaises for these)
 
     For each test case, provide:
     - A descriptive test name that starts with 'test_'
     - The complete function body with proper assertions
+    - For error cases, use self.assertRaises(ExceptionType): followed by the function call
 
     Please generate the tests in the required format.
 

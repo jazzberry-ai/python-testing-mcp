@@ -2,6 +2,7 @@ fastmcp
 google-generativeai
 uv
 baml
+baml-cli
 pytest
 black
 isort
