@@ -16,6 +16,9 @@ from . import stream_types
 
 type_map = {
 
+    "types.CoverageAnalysis": types.CoverageAnalysis,
+    "stream_types.CoverageAnalysis": stream_types.CoverageAnalysis,
+
     "types.FuzzInput": types.FuzzInput,
     "stream_types.FuzzInput": stream_types.FuzzInput,
 

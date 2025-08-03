@@ -7,4 +7,6 @@ pytest
 black
 isort
 mypy
+coverage
+astunparse
 

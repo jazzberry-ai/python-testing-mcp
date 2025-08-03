@@ -18,7 +18,7 @@ from .globals import DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIM
 class TypeBuilder(type_builder.TypeBuilder):
     def __init__(self):
         super().__init__(classes=set(
-          ["FuzzInput","PythonTestFile","TestCase",]
+          ["CoverageAnalysis","FuzzInput","PythonTestFile","TestCase",]
         ), enums=set(
           []
         ), runtime=DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME)
@@ -29,8 +29,12 @@ class TypeBuilder(type_builder.TypeBuilder):
 
 
     # #########################################################################
-    # Generated classes 3
+    # Generated classes 4
     # #########################################################################
+
+    @property
+    def CoverageAnalysis(self) -> "CoverageAnalysisViewer":
+        return CoverageAnalysisViewer(self)
 
     @property
     def FuzzInput(self) -> "FuzzInputViewer":
@@ -52,8 +56,67 @@ class TypeBuilder(type_builder.TypeBuilder):
 
 
 # #########################################################################
-# Generated classes 3
+# Generated classes 4
 # #########################################################################
+
+class CoverageAnalysisAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("CoverageAnalysis")
+        self._properties: typing.Set[str] = set([  "function_name",  "branches",  "loops",  "exception_paths",  "return_statements",  "parameters",  ])
+        self._props = CoverageAnalysisProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "CoverageAnalysisProperties":
+        return self._props
+
+
+class CoverageAnalysisViewer(CoverageAnalysisAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class CoverageAnalysisProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def function_name(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("function_name"))
+    
+    @property
+    def branches(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("branches"))
+    
+    @property
+    def loops(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("loops"))
+    
+    @property
+    def exception_paths(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("exception_paths"))
+    
+    @property
+    def return_statements(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("return_statements"))
+    
+    @property
+    def parameters(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("parameters"))
+    
+    
+
 
 class FuzzInputAst:
     def __init__(self, tb: type_builder.TypeBuilder):

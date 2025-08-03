@@ -85,6 +85,13 @@ class BamlSyncClient:
     def parse_stream(self):
       return self.__llm_stream_parser
     
+    def GenerateCoverageTests(self, source_code: str,analysis: types.CoverageAnalysis,
+        baml_options: BamlCallOptions = {},
+    ) -> types.PythonTestFile:
+        result = self.__options.merge_options(baml_options).call_function_sync(function_name="GenerateCoverageTests", args={
+            "source_code": source_code,"analysis": analysis,
+        })
+        return typing.cast(types.PythonTestFile, result.cast_to(types, types, stream_types, False, __runtime__))
     def GenerateFuzzInputs(self, source_code: str,
         baml_options: BamlCallOptions = {},
     ) -> typing.List["types.FuzzInput"]:
@@ -108,6 +115,18 @@ class BamlStreamClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
+    def GenerateCoverageTests(self, source_code: str,analysis: types.CoverageAnalysis,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlSyncStream[stream_types.PythonTestFile, types.PythonTestFile]:
+        ctx, result = self.__options.merge_options(baml_options).create_sync_stream(function_name="GenerateCoverageTests", args={
+            "source_code": source_code,"analysis": analysis,
+        })
+        return baml_py.BamlSyncStream[stream_types.PythonTestFile, types.PythonTestFile](
+          result,
+          lambda x: typing.cast(stream_types.PythonTestFile, x.cast_to(types, types, stream_types, True, __runtime__)),
+          lambda x: typing.cast(types.PythonTestFile, x.cast_to(types, types, stream_types, False, __runtime__)),
+          ctx,
+        )
     def GenerateFuzzInputs(self, source_code: str,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.BamlSyncStream[typing.List["stream_types.FuzzInput"], typing.List["types.FuzzInput"]]:
@@ -140,6 +159,13 @@ class BamlHttpRequestClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
+    def GenerateCoverageTests(self, source_code: str,analysis: types.CoverageAnalysis,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GenerateCoverageTests", args={
+            "source_code": source_code,"analysis": analysis,
+        }, mode="request")
+        return result
     def GenerateFuzzInputs(self, source_code: str,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
@@ -162,6 +188,13 @@ class BamlHttpStreamRequestClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
+    def GenerateCoverageTests(self, source_code: str,analysis: types.CoverageAnalysis,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GenerateCoverageTests", args={
+            "source_code": source_code,"analysis": analysis,
+        }, mode="stream")
+        return result
     def GenerateFuzzInputs(self, source_code: str,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:

@@ -41,8 +41,16 @@ def all_succeeded(checks: typing.Dict[CheckName, Check]) -> bool:
 # #########################################################################
 
 # #########################################################################
-# Generated classes (3)
+# Generated classes (4)
 # #########################################################################
+
+class CoverageAnalysis(BaseModel):
+    function_name: str
+    branches: typing.List[str]
+    loops: typing.List[str]
+    exception_paths: typing.List[str]
+    return_statements: typing.List[str]
+    parameters: typing.List[str]
 
 class FuzzInput(BaseModel):
     value: str

@@ -23,8 +23,16 @@ class StreamState(BaseModel, typing.Generic[StreamStateValueT]):
     value: StreamStateValueT
     state: typing_extensions.Literal["Pending", "Incomplete", "Complete"]
 # #########################################################################
-# Generated classes (3)
+# Generated classes (4)
 # #########################################################################
+
+class CoverageAnalysis(BaseModel):
+    function_name: typing.Optional[str] = None
+    branches: typing.List[str]
+    loops: typing.List[str]
+    exception_paths: typing.List[str]
+    return_statements: typing.List[str]
+    parameters: typing.List[str]
 
 class FuzzInput(BaseModel):
     value: typing.Optional[str] = None
