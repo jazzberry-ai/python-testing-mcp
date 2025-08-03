@@ -1,39 +1,69 @@
-# Software Testing Tools MCP Server
+# Python Testing Tools MCP Server
 
-This project provides a modular MCP server for various software testing tools. The server is designed to be easily extensible with a clean, professional structure that scales well as new tools are added.
+An advanced Model Context Protocol (MCP) server that provides AI-powered Python testing tools. This project leverages both Google's Gemini AI and BAML (Boundary ML) to intelligently generate comprehensive unit tests and perform sophisticated fuzz testing on Python code.
 
-## Features
+## Overview
 
-- **Unit Test Generation**: Automatically generate unit tests for Python functions using AI.
-- **Fuzz Testing**: Intelligent fuzz testing with AI-generated test cases.
-- **Modular Architecture**: Clean separation of concerns with categorized tools.
-- **Shared Utilities**: Common functionality for AI clients and file handling.
-- **Configuration Management**: Environment-based configuration system.
+This MCP server offers automated testing capabilities through two main tools:
+1. **Intelligent Unit Test Generation** - Automatically creates comprehensive test suites with proper edge cases, assertions, and error handling
+2. **AI-Powered Fuzz Testing** - Generates diverse, challenging inputs to test function robustness and discover potential crashes
+
+The server uses a hybrid AI approach: BAML for structured test generation and Gemini for intelligent input generation, ensuring high-quality, reliable test outputs.
+
+## Key Features
+
+- **AI-Powered Unit Test Generation**: Uses BAML with Gemini to generate comprehensive unittest suites covering normal cases, edge cases, and error conditions
+- **Intelligent Fuzz Testing**: Leverages AI to generate diverse, challenging inputs that test function boundaries and error handling
+- **BAML Integration**: Structured AI responses using BAML (Boundary ML) for consistent, parseable test generation
+- **FastMCP Framework**: Built on FastMCP for efficient MCP server implementation
+- **Robust Error Handling**: Graceful fallbacks and detailed error reporting throughout the testing pipeline
+- **Modular Architecture**: Clean separation between tools, utilities, and AI clients for easy extension
+- **Code Analysis**: Uses Python AST parsing for accurate function extraction and analysis
+
+## Architecture
+
+The project follows a clean, modular architecture:
+- **FastMCP Server**: Main entry point using the FastMCP framework
+- **BAML Integration**: Structured AI prompts and response parsing via BAML
+- **Dual AI Backend**: Combines BAML's structured generation with Gemini's language understanding
+- **Utility Layer**: Shared functionality for file handling, AST parsing, and AI client management
 
 ## Directory Structure
 
 ```
-mcp_test/
-├── mcp_server.py                  # Main MCP server entry point
-├── tools/                         # Testing tool modules
-│   ├── unit_test_generator.py     # Unit test generation
-│   └── fuzz_tester.py            # Fuzz testing functionality
-├── utils/                         # Shared utilities
+python-testing-mcp/
+├── python_testing_mcp_server.py   # Main FastMCP server entry point
+├── baml_src/                      # BAML configuration and prompts
+│   └── main.baml                  # AI function definitions and prompts
+├── baml_client/                   # Generated BAML client code
+│   ├── sync_client.py             # Synchronous BAML client
+│   ├── types.py                   # Generated type definitions
+│   └── [other generated files]    # Additional BAML runtime files
+├── tools/                         # Core testing tool implementations
+│   ├── unit_test_generator.py     # AI-powered unit test generation
+│   └── fuzz_tester.py            # Intelligent fuzz testing engine
+├── utils/                         # Shared utilities and helpers
 │   ├── __init__.py               # Module exports
-│   ├── ai_clients.py             # Gemini API client setup
-│   └── file_handlers.py          # File I/O operations
-├── example_functions.py           # Example functions for testing
-└── README.md                      # This file
+│   ├── ai_clients.py             # Gemini AI client configuration
+│   └── file_handlers.py          # File I/O and AST parsing utilities
+├── demo/                          # Example files for testing
+│   └── basic_example_functions.py # Simple functions for demonstration
+├── requirements.txt               # Python dependencies
+├── LICENSE                        # Apache 2.0 license
+└── README.md                      # This documentation
 ```
 
 ## Configuration
 
 The server uses environment variables for configuration:
 
-- `GEMINI_API_KEY`: Required - Your Google Gemini API key.
-- `GEMINI_MODEL`: Optional - Gemini model to use (default: gemini-2.5-flash).
-- `MAX_FUZZ_INPUTS`: Optional - Number of fuzz test inputs to generate (default: 20).
-- `MCP_SERVER_NAME`: Optional - Server name (default: python_testing_tools).
+- `GEMINI_API_KEY`: **Required** - Your Google Gemini API key for AI-powered test generation
+- `GEMINI_MODEL`: Optional - Gemini model to use (default: `gemini-2.5-flash`)
+
+The BAML configuration in `baml_src/main.baml` defines:
+- AI function signatures for test generation and fuzz input creation
+- Structured response formats using BAML classes
+- Detailed prompts for comprehensive test coverage
 
 ## Installation
 
@@ -138,48 +168,69 @@ This should create a file called `test_basic_example_functions.py` in the demo f
 
 ### Unit Test Generator
 - **Function**: `generate_unit_tests_tool`
-- **Description**: Generates comprehensive unit tests for Python functions.
-- **Parameters**: `file_path` (str) - Path to the Python file.
+- **Description**: Generates comprehensive unit tests for all functions in a Python file using AI
+- **Parameters**: 
+  - `file_path` (str) - Path to the Python file to generate tests for
+- **Features**:
+  - Generates 4-6 test cases per function covering normal, edge, and error cases
+  - Uses proper unittest framework with `self.assertRaises()` for exception testing
+  - Automatically handles module imports and class naming conventions
+  - Creates properly formatted test files with correct indentation
 
 ### Fuzz Tester
 - **Function**: `fuzz_test_function_tool`
-- **Description**: Performs intelligent fuzz testing on specific functions.
+- **Description**: Performs intelligent fuzz testing on a specific function using AI-generated inputs
 - **Parameters**: 
-  - `file_path` (str) - Path to the Python file.
-  - `function_name` (str) - Name of the function to test.
+  - `file_path` (str) - Path to the Python file containing the function
+  - `function_name` (str) - Name of the specific function to fuzz test
+- **Features**:
+  - Generates 20 diverse test inputs including edge cases and malformed data
+  - Tests with boundary values, large inputs, and unusual data combinations
+  - Reports crashes with detailed error traces and input values
+  - Uses `ast.literal_eval()` for safe input parsing
 
 ## Adding New Tools
 
-To add a new tool:
+The modular architecture makes it easy to extend the server with new testing tools:
 
-1. Create a new Python file in the `tools/` directory.
-2. Implement your tool function with proper imports from `utils`.
-3. Import and register the tool in `mcp_server.py`.
+1. **Create Tool Implementation**: Add a new Python file in the `tools/` directory
+2. **Use Shared Utilities**: Import common functionality from `utils` module
+3. **Integrate BAML (Optional)**: Add new AI functions to `baml_src/main.baml` for AI-powered tools
+4. **Register Tool**: Import and register the tool in `python_testing_mcp_server.py`
 
 Example:
 ```python
-# tools/code_quality.py
+# tools/code_coverage.py
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from utils import get_gemini_client, read_python_file
+from utils import read_python_file, parse_python_ast
 
-def analyze_code_quality(file_path: str) -> str:
+def analyze_code_coverage(file_path: str) -> str:
     # Your implementation here
-    pass
+    source_code = read_python_file(file_path)
+    # ... analysis logic
+    return "Coverage analysis results"
 
-# Add to mcp_server.py
-from code_quality import analyze_code_quality
+# Add to python_testing_mcp_server.py
+from code_coverage import analyze_code_coverage
 
 @mcp.tool
-def analyze_code_quality_tool(file_path: str) -> str:
-    return analyze_code_quality(file_path)
+def analyze_code_coverage_tool(file_path: str) -> str:
+    """Analyze code coverage for the given Python file."""
+    return analyze_code_coverage(file_path)
 ```
 
 ## Development
 
-For development, all dependencies are included in `requirements.txt`.
+### Dependencies
+All dependencies are managed in `requirements.txt` including:
+- `fastmcp` - MCP server framework
+- `baml` & `baml-cli` - BAML AI integration
+- `google-generativeai` - Gemini AI client
+- `pytest`, `black`, `isort`, `mypy` - Development tools
 
+### Code Quality
 Format code:
 ```bash
 black tools/ utils/ *.py
@@ -190,6 +241,12 @@ Type checking:
 ```bash
 mypy tools/ utils/ *.py
 ```
+
+### BAML Development
+To modify AI prompts or add new AI functions:
+1. Edit `baml_src/main.baml`
+2. Run `baml generate` to update the client code
+3. Test changes with the demo functions
 
 ## License
 
