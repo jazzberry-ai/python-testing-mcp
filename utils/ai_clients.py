@@ -18,7 +18,7 @@ def get_gemini_client():
     
     try:
         genai.configure(api_key=api_key)
-        model_name = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')
+        model_name = os.getenv('GEMINI_MODEL', 'gemini-2.5-flash')
         return genai.GenerativeModel(model_name)
     except Exception as e:
         raise Exception(f"Failed to configure Gemini client: {e}")

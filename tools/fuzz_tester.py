@@ -4,7 +4,9 @@ import importlib.util
 import sys
 import traceback
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from utils import get_gemini_client, read_python_file, parse_python_ast
+from baml_client.sync_client import b
+from baml_client.types import FuzzInput
+from utils import read_python_file, parse_python_ast
 
 def fuzz_test_function(file_path: str, function_name: str) -> str:
     """
@@ -27,33 +29,28 @@ def fuzz_test_function(file_path: str, function_name: str) -> str:
         return f"Error: Function '{function_name}' not found in {file_path}"
 
     try:
-        model = get_gemini_client()
-    except (KeyError, Exception) as e:
-        return f"Error: {e}"
-
-    prompt = f"""
-You are a software security and testing expert.
-Your task is to generate a Python list of 20 diverse and challenging inputs for fuzz testing the following Python function.
-The list should include edge cases, malformed data, large inputs, and any other inputs that might cause unexpected behavior or crashes.
-The output should be a single Python list of values.
-
-Here is the function to fuzz:
-```python
-{function_source}
-```
-"""
-
-    try:
-        response = model.generate_content(prompt)
-        fuzz_inputs_str = response.text.strip()
-        if fuzz_inputs_str.startswith("```python"):
-            fuzz_inputs_str = fuzz_inputs_str[len("```python"):].strip()
-        if fuzz_inputs_str.endswith("```"):
-            fuzz_inputs_str = fuzz_inputs_str[:-len("```")].strip()
-
-        fuzz_inputs = ast.literal_eval(fuzz_inputs_str)
+        # Call the BAML function to generate the fuzzing inputs
+        fuzz_inputs: list[FuzzInput] = b.GenerateFuzzInputs(function_source)
+        
+        fuzz_input_values = []
+        parsing_errors = 0
+        for i, fuzz_input in enumerate(fuzz_inputs):
+            try:
+                parsed_value = ast.literal_eval(fuzz_input.value)
+                fuzz_input_values.append(parsed_value)
+            except Exception as parse_error:
+                parsing_errors += 1
+                # Skip inputs that can't be parsed
+                continue
+        
+        if parsing_errors > 0:
+            print(f"Warning: Skipped {parsing_errors} fuzzing inputs due to parsing errors")
+        
+        if not fuzz_input_values:
+            return f"Error: No valid fuzzing inputs could be parsed from BAML response"
+            
     except Exception as e:
-        return f"Error generating or parsing fuzzing inputs from Gemini: {e}"
+        return f"Error generating fuzzing inputs from BAML: {e}"
 
     module_name = os.path.splitext(os.path.basename(file_path))[0]
     spec = importlib.util.spec_from_file_location(module_name, file_path)
@@ -63,7 +60,7 @@ Here is the function to fuzz:
     function_to_test = getattr(module, function_name)
 
     crashes = []
-    for i, fuzz_input in enumerate(fuzz_inputs):
+    for i, fuzz_input in enumerate(fuzz_input_values):
         try:
             if isinstance(fuzz_input, tuple):
                 function_to_test(*fuzz_input)
@@ -76,7 +73,7 @@ Here is the function to fuzz:
             })
 
     if not crashes:
-        return f"Fuzz testing completed for '{function_name}'. No crashes found in {len(fuzz_inputs)} test cases."
+        return f"Fuzz testing completed for '{function_name}'. No crashes found in {len(fuzz_input_values)} test cases."
 
     result = f"Fuzz testing for '{function_name}' found {len(crashes)} crash(es):\n\n"
     for crash in crashes:

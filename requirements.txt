@@ -1,6 +1,7 @@
 fastmcp
 google-generativeai
 uv
+baml
 pytest
 black
 isort

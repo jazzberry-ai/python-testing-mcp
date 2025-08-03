@@ -4,7 +4,7 @@ import traceback
 
 # Add the demo directory to Python path to import example_functions
 sys.path.insert(0, os.path.dirname(__file__))
-from example_functions import add, subtract
+from basic_example_functions import add, subtract
 
 def fuzz_test_add():
     """Fuzz test the add function with diverse inputs."""
