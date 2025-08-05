@@ -52,7 +52,8 @@ python-testing-mcp/
 │   └── file_handlers.py           # File I/O and AST parsing utilities
 ├── demo/                          # Example files for testing
 │   └── basic_example_functions.py # Simple functions for demonstration
-├── requirements.txt               # Python dependencies
+├── pyproject.toml                 # Python project configuration and dependencies
+├── uv.lock                        # Dependency lock file for reproducible builds
 ├── LICENSE                        # Apache 2.0 license
 └── README.md                      # This documentation
 ```
@@ -71,16 +72,12 @@ The BAML configuration in `baml_src/main.baml` defines:
 
 ## Installation
 
-1. Create and activate a virtual environment:
+1. Install dependencies using uv:
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+uv sync
 ```
 
-2. Install dependencies from `requirements.txt`:
-```bash
-pip install -r requirements.txt
-```
+This will automatically create a virtual environment and install all dependencies from `pyproject.toml`.
 
 3. Set your Gemini API key:
 ```bash
@@ -92,74 +89,89 @@ export GEMINI_API_KEY="your-api-key-here"
 To run the MCP server:
 
 ```bash
-python mcp_server.py
+uv run python python_testing_mcp_server.py
 ```
 
 ## Running the Server in Claude Code
 
-The documentation for FastMCP and Claude Code can be found here: https://gofastmcp.com/integrations/claude-code
+Claude Code provides native MCP server support. Here are the recommended installation methods:
 
-### Step 1: Install the MCP Server
+### Method 1: Using Claude Code's Native MCP Command (Recommended)
 
-Install the server using FastMCP:
+1. **Navigate to your project directory**:
 ```bash
-fastmcp install claude-code python_testing_mcp_server.py --env GEMINI_API_KEY='your-api-key-here'
+cd /path/to/python-testing-mcp
 ```
 
-### Step 2: Configure Claude Code
+2. **Install dependencies**:
+```bash
+uv sync
+```
 
-Your `.claude.json` configuration should look like this:
+3. **Add the MCP server to Claude Code**:
+```bash
+claude mcp add python_testing_tools --env GEMINI_API_KEY=your-api-key-here -- uv run python python_testing_mcp_server.py
+```
+
+4. **Verify the server is connected**:
+```bash
+claude mcp list
+```
+
+You should see output like:
+```
+python_testing_tools: uv run python python_testing_mcp_server.py - ✓ Connected
+```
+
+### Method 2: Using FastMCP (Alternative)
+
+If you prefer using FastMCP, you can try:
+```bash
+uv run fastmcp install python_testing_mcp_server.py --env-var GEMINI_API_KEY=your-api-key-here
+```
+
+**Note**: If FastMCP can't detect your Claude Code installation automatically, use Method 1 instead.
+
+### Method 3: Manual Configuration
+
+If the above methods don't work, you can manually configure the server by editing your `.claude.json` file:
 
 ```json
 {
   "/path/to/your/project": {
-    "allowedTools": [],
-    "history": [],
-    "mcpContextUris": [],
     "mcpServers": {
       "python_testing_tools": {
         "type": "stdio",
         "command": "uv",
         "args": [
           "run",
-          "--with",
-          "fastmcp",
-          "fastmcp",
-          "run",
+          "python",
           "/path/to/your/project/python_testing_mcp_server.py"
         ],
         "env": {
           "GEMINI_API_KEY": "your-api-key-here"
         }
       }
-    },
-    "enabledMcpjsonServers": [],
-    "disabledMcpjsonServers": [],
-    "hasTrustDialogAccepted": false,
-    "projectOnboardingSeenCount": 0,
-    "hasClaudeMdExternalIncludesApproved": false,
-    "hasClaudeMdExternalIncludesWarningShown": false
+    }
   }
 }
 ```
 
-**Note**: Replace `/path/to/your/project` with the actual path to your project directory, and `your-api-key-here` with your actual Gemini API key.
+### Verifying Installation
 
-### Step 3: Start Claude Code
-
-Start Claude Code:
+1. **Start Claude Code**:
 ```bash
 claude
 ```
 
-### Step 4: Verify Connection
-
-Check if the MCP server is connected:
+2. **Check MCP server status**:
 ```bash
 /mcp
 ```
 
-### Step 5: Test the Tools
+You should see "Reconnected to python_testing_tools" or similar confirmation.
+
+### Testing the Tools
 
 Test the unit test generation tool:
 ```bash
@@ -258,7 +270,7 @@ def analyze_performance_tool(file_path: str) -> str:
 ## Development
 
 ### Dependencies
-All dependencies are managed in `requirements.txt` including:
+All dependencies are managed in `pyproject.toml` including:
 - `fastmcp` - MCP server framework
 - `baml` & `baml-cli` - BAML AI integration
 - `google-generativeai` - Gemini AI client
@@ -269,29 +281,29 @@ All dependencies are managed in `requirements.txt` including:
 ### Code Quality
 Format code:
 ```bash
-black tools/ utils/ *.py
-isort tools/ utils/ *.py
+uv run black tools/ utils/ *.py
+uv run isort tools/ utils/ *.py
 ```
 
 Type checking:
 ```bash
-mypy tools/ utils/ *.py
+uv run mypy tools/ utils/ *.py
 ```
 
 ### BAML Development
 To modify AI prompts or add new AI functions:
 1. Edit `baml_src/main.baml`
-2. Run `baml-cli generate` to update the client code
+2. Run `uv run baml generate` to update the client code
 3. Test changes with the demo functions
 
 ### Testing Coverage
 To test the coverage functionality:
 ```bash
 # Generate coverage tests
-python -c "from tools.coverage_tester import generate_coverage_tests; print(generate_coverage_tests('demo/basic_example_functions.py'))"
+uv run python -c "from tools.coverage_tester import generate_coverage_tests; print(generate_coverage_tests('demo/basic_example_functions.py'))"
 
 # Run the generated coverage tests
-cd demo && python test_coverage_basic_example_functions.py
+cd demo && uv run python test_coverage_basic_example_functions.py
 ```
 
 ## License

@@ -9,7 +9,7 @@ from coverage_tester import generate_coverage_tests
 
 mcp = FastMCP(name="python_testing_tools")
 
-@mcp.tool
+@mcp.tool()
 def generate_unit_tests_tool(file_path: str) -> str:
     """
     Takes a Python file path as input, generates a basic unit test file for it,
@@ -18,7 +18,7 @@ def generate_unit_tests_tool(file_path: str) -> str:
     """
     return generate_unit_tests(file_path)
 
-@mcp.tool
+@mcp.tool()
 def fuzz_test_function_tool(file_path: str, function_name: str) -> str:
     """
     Performs fuzz testing on a specific function within a given file.
@@ -26,7 +26,7 @@ def fuzz_test_function_tool(file_path: str, function_name: str) -> str:
     """
     return fuzz_test_function(file_path, function_name)
 
-@mcp.tool
+@mcp.tool()
 def generate_coverage_tests_tool(file_path: str) -> str:
     """
     Generates comprehensive test cases designed to achieve maximum code coverage.
