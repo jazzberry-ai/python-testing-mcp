@@ -57,7 +57,11 @@ python-testing-mcp/
 │   ├── mutation_test_executor.py  # Mutation test execution and reporting
 │   └── mutation_intelligence.py   # AI-powered mutation analysis
 ├── demo/                          # Example files for testing
-│   └── basic_example_functions.py # Simple functions for demonstration
+│   ├── basic_example_functions.py # Simple functions for basic testing
+│   ├── medium_complexity.py       # Moderate complexity validation logic
+│   ├── advanced_algorithms.py     # Complex algorithms (search, sort, math)
+│   ├── data_processor.py          # Concurrent processing & state management
+│   └── security_analyzer.py       # Security analysis & validation framework
 ├── pyproject.toml                 # Python project configuration and dependencies
 ├── uv.lock                        # Dependency lock file for reproducible builds
 ├── LICENSE                        # Apache 2.0 license
@@ -179,27 +183,39 @@ You should see "Reconnected to python_testing_tools" or similar confirmation.
 
 ### Testing the Tools
 
-Test the unit test generation tool:
+The demo files showcase increasingly sophisticated testing scenarios:
+
+**Basic Testing (Simple Functions):**
 ```bash
 create unit tests for @demo/basic_example_functions.py
-```
-
-Test the coverage testing tool:
-```bash
-generate comprehensive coverage tests for @demo/basic_example_functions.py
-```
-
-Test the fuzz testing tool:
-```bash
 fuzz test the add function in @demo/basic_example_functions.py
 ```
 
-Test the mutation testing tool:
+**Advanced Algorithm Testing (Complex Logic):**
 ```bash
-run mutation testing on @demo/basic_example_functions.py
+generate coverage tests for @demo/advanced_algorithms.py
+fuzz test the binary_search_with_analytics function in @demo/advanced_algorithms.py
+run mutation testing on @demo/advanced_algorithms.py
 ```
 
-These should create test files in the demo folder with comprehensive test coverage and mutation testing reports.
+**Concurrent Systems Testing (Threading & State):**
+```bash
+create unit tests for @demo/data_processor.py
+generate coverage tests for @demo/data_processor.py
+```
+
+**Security Testing (Defensive Analysis):**
+```bash
+generate coverage tests for @demo/security_analyzer.py
+run mutation testing on @demo/security_analyzer.py
+```
+
+These advanced demo files will demonstrate the full power of the MCP testing tools with:
+- Complex branching logic and edge case handling
+- Multi-threaded operations and state management
+- Security vulnerability detection and input validation
+- Sophisticated algorithmic implementations
+- Advanced error handling and recovery patterns
 
 ## Available Tools
 
@@ -328,21 +344,31 @@ To modify AI prompts or add new AI functions:
 3. Test changes with the demo functions
 
 ### Testing the Tools
-To test the various testing tools:
+To test the various testing tools with the sophisticated demo files:
 
 ```bash
-# Generate unit tests
-uv run python -c "from tools.unit_test_generator import generate_unit_tests; print(generate_unit_tests('demo/basic_example_functions.py'))"
+# Generate unit tests for complex algorithms
+uv run python -c "from tools.unit_test_generator import generate_unit_tests; print(generate_unit_tests('demo/advanced_algorithms.py'))"
 
-# Generate coverage tests
-uv run python -c "from tools.coverage_tester import generate_coverage_tests; print(generate_coverage_tests('demo/basic_example_functions.py'))"
+# Generate coverage tests for security framework
+uv run python -c "from tools.coverage_tester import generate_coverage_tests; print(generate_coverage_tests('demo/security_analyzer.py'))"
 
-# Run mutation testing
-uv run python -c "from tools.mutation_tester import run_mutation_testing; print(run_mutation_testing('demo/basic_example_functions.py'))"
+# Run mutation testing on concurrent data processor
+uv run python -c "from tools.mutation_tester import run_mutation_testing; print(run_mutation_testing('demo/data_processor.py'))"
 
-# Run fuzz testing on a specific function
-uv run python -c "from tools.fuzz_tester import fuzz_test_function; print(fuzz_test_function('demo/basic_example_functions.py', 'add'))"
+# Run fuzz testing on complex algorithm functions
+uv run python -c "from tools.fuzz_tester import fuzz_test_function; print(fuzz_test_function('demo/advanced_algorithms.py', 'binary_search_with_analytics'))"
+
+# Test with different demo files to showcase various scenarios
+uv run python -c "from tools.coverage_tester import generate_coverage_tests; print(generate_coverage_tests('demo/advanced_algorithms.py'))"
 ```
+
+**Demo File Complexity Levels:**
+- `basic_example_functions.py` - Simple arithmetic functions for initial testing
+- `medium_complexity.py` - Input validation with moderate branching logic  
+- `advanced_algorithms.py` - Complex algorithms with extensive error handling
+- `data_processor.py` - Multi-threaded processing with state management
+- `security_analyzer.py` - Security analysis with comprehensive validation
 
 ## License
 
