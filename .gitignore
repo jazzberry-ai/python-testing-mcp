@@ -81,4 +81,5 @@ output/
 !requirements.txt
 !package.json
 
-.claude_note.md
+# Codegen files
+CLAUDE.md

@@ -6,6 +6,7 @@ from fastmcp import FastMCP
 from unit_test_generator import generate_unit_tests
 from fuzz_tester import fuzz_test_function
 from coverage_tester import generate_coverage_tests
+from mutation_tester import run_mutation_testing
 
 mcp = FastMCP(name="python_testing_tools")
 
@@ -34,6 +35,16 @@ def generate_coverage_tests_tool(file_path: str) -> str:
     Uses AI to generate intelligent test cases that target specific coverage scenarios.
     """
     return generate_coverage_tests(file_path)
+
+@mcp.tool()
+def mutation_testing_tool(file_path: str) -> str:
+    """
+    Performs intelligent mutation testing using mutmut and AI analysis.
+    Runs mutations on the code, analyzes which mutations survived testing,
+    and provides AI-powered recommendations for improving test coverage.
+    Returns detailed report with mutation score and specific test suggestions.
+    """
+    return run_mutation_testing(file_path)
 
 if __name__ == "__main__":
     mcp.run()

@@ -23,7 +23,7 @@ class StreamState(BaseModel, typing.Generic[StreamStateValueT]):
     value: StreamStateValueT
     state: typing_extensions.Literal["Pending", "Incomplete", "Complete"]
 # #########################################################################
-# Generated classes (4)
+# Generated classes (5)
 # #########################################################################
 
 class CoverageAnalysis(BaseModel):
@@ -36,6 +36,12 @@ class CoverageAnalysis(BaseModel):
 
 class FuzzInput(BaseModel):
     value: typing.Optional[str] = None
+
+class MutationAnalysis(BaseModel):
+    critical_survivors: typing.List[str]
+    edge_case_gaps: typing.List[str]
+    test_recommendations: typing.List[str]
+    overall_assessment: typing.Optional[str] = None
 
 class PythonTestFile(BaseModel):
     imports: typing.List[str]

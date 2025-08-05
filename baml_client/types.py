@@ -41,7 +41,7 @@ def all_succeeded(checks: typing.Dict[CheckName, Check]) -> bool:
 # #########################################################################
 
 # #########################################################################
-# Generated classes (4)
+# Generated classes (5)
 # #########################################################################
 
 class CoverageAnalysis(BaseModel):
@@ -54,6 +54,12 @@ class CoverageAnalysis(BaseModel):
 
 class FuzzInput(BaseModel):
     value: str
+
+class MutationAnalysis(BaseModel):
+    critical_survivors: typing.List[str]
+    edge_case_gaps: typing.List[str]
+    test_recommendations: typing.List[str]
+    overall_assessment: str
 
 class PythonTestFile(BaseModel):
     imports: typing.List[str]

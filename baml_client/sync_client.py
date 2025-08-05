@@ -85,6 +85,13 @@ class BamlSyncClient:
     def parse_stream(self):
       return self.__llm_stream_parser
     
+    def AnalyzeMutationResults(self, source_code: str,survived_mutations: str,mutation_details: str,
+        baml_options: BamlCallOptions = {},
+    ) -> types.MutationAnalysis:
+        result = self.__options.merge_options(baml_options).call_function_sync(function_name="AnalyzeMutationResults", args={
+            "source_code": source_code,"survived_mutations": survived_mutations,"mutation_details": mutation_details,
+        })
+        return typing.cast(types.MutationAnalysis, result.cast_to(types, types, stream_types, False, __runtime__))
     def GenerateCoverageTests(self, source_code: str,analysis: types.CoverageAnalysis,
         baml_options: BamlCallOptions = {},
     ) -> types.PythonTestFile:
@@ -115,6 +122,18 @@ class BamlStreamClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
+    def AnalyzeMutationResults(self, source_code: str,survived_mutations: str,mutation_details: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlSyncStream[stream_types.MutationAnalysis, types.MutationAnalysis]:
+        ctx, result = self.__options.merge_options(baml_options).create_sync_stream(function_name="AnalyzeMutationResults", args={
+            "source_code": source_code,"survived_mutations": survived_mutations,"mutation_details": mutation_details,
+        })
+        return baml_py.BamlSyncStream[stream_types.MutationAnalysis, types.MutationAnalysis](
+          result,
+          lambda x: typing.cast(stream_types.MutationAnalysis, x.cast_to(types, types, stream_types, True, __runtime__)),
+          lambda x: typing.cast(types.MutationAnalysis, x.cast_to(types, types, stream_types, False, __runtime__)),
+          ctx,
+        )
     def GenerateCoverageTests(self, source_code: str,analysis: types.CoverageAnalysis,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.BamlSyncStream[stream_types.PythonTestFile, types.PythonTestFile]:
@@ -159,6 +178,13 @@ class BamlHttpRequestClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
+    def AnalyzeMutationResults(self, source_code: str,survived_mutations: str,mutation_details: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="AnalyzeMutationResults", args={
+            "source_code": source_code,"survived_mutations": survived_mutations,"mutation_details": mutation_details,
+        }, mode="request")
+        return result
     def GenerateCoverageTests(self, source_code: str,analysis: types.CoverageAnalysis,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
@@ -188,6 +214,13 @@ class BamlHttpStreamRequestClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
+    def AnalyzeMutationResults(self, source_code: str,survived_mutations: str,mutation_details: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        result = self.__options.merge_options(baml_options).create_http_request_sync(function_name="AnalyzeMutationResults", args={
+            "source_code": source_code,"survived_mutations": survived_mutations,"mutation_details": mutation_details,
+        }, mode="stream")
+        return result
     def GenerateCoverageTests(self, source_code: str,analysis: types.CoverageAnalysis,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:

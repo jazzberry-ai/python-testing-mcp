@@ -22,6 +22,9 @@ type_map = {
     "types.FuzzInput": types.FuzzInput,
     "stream_types.FuzzInput": stream_types.FuzzInput,
 
+    "types.MutationAnalysis": types.MutationAnalysis,
+    "stream_types.MutationAnalysis": stream_types.MutationAnalysis,
+
     "types.PythonTestFile": types.PythonTestFile,
     "stream_types.PythonTestFile": stream_types.PythonTestFile,
 

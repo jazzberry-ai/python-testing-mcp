@@ -18,7 +18,7 @@ from .globals import DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIM
 class TypeBuilder(type_builder.TypeBuilder):
     def __init__(self):
         super().__init__(classes=set(
-          ["CoverageAnalysis","FuzzInput","PythonTestFile","TestCase",]
+          ["CoverageAnalysis","FuzzInput","MutationAnalysis","PythonTestFile","TestCase",]
         ), enums=set(
           []
         ), runtime=DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME)
@@ -29,7 +29,7 @@ class TypeBuilder(type_builder.TypeBuilder):
 
 
     # #########################################################################
-    # Generated classes 4
+    # Generated classes 5
     # #########################################################################
 
     @property
@@ -39,6 +39,10 @@ class TypeBuilder(type_builder.TypeBuilder):
     @property
     def FuzzInput(self) -> "FuzzInputViewer":
         return FuzzInputViewer(self)
+
+    @property
+    def MutationAnalysis(self) -> "MutationAnalysisViewer":
+        return MutationAnalysisViewer(self)
 
     @property
     def PythonTestFile(self) -> "PythonTestFileViewer":
@@ -56,7 +60,7 @@ class TypeBuilder(type_builder.TypeBuilder):
 
 
 # #########################################################################
-# Generated classes 4
+# Generated classes 5
 # #########################################################################
 
 class CoverageAnalysisAst:
@@ -153,6 +157,57 @@ class FuzzInputProperties:
     @property
     def value(self) -> type_builder.ClassPropertyViewer:
         return type_builder.ClassPropertyViewer(self.__bldr.property("value"))
+    
+    
+
+
+class MutationAnalysisAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("MutationAnalysis")
+        self._properties: typing.Set[str] = set([  "critical_survivors",  "edge_case_gaps",  "test_recommendations",  "overall_assessment",  ])
+        self._props = MutationAnalysisProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "MutationAnalysisProperties":
+        return self._props
+
+
+class MutationAnalysisViewer(MutationAnalysisAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class MutationAnalysisProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def critical_survivors(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("critical_survivors"))
+    
+    @property
+    def edge_case_gaps(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("edge_case_gaps"))
+    
+    @property
+    def test_recommendations(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("test_recommendations"))
+    
+    @property
+    def overall_assessment(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("overall_assessment"))
     
     
 

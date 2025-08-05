@@ -4,10 +4,11 @@ An advanced Model Context Protocol (MCP) server that provides AI-powered Python 
 
 ## Overview
 
-This MCP server offers automated testing capabilities through three main tools:
+This MCP server offers automated testing capabilities through four main tools:
 1. **Intelligent Unit Test Generation** - Automatically creates comprehensive test suites with proper edge cases, assertions, and error handling
 2. **AI-Powered Fuzz Testing** - Generates diverse, challenging inputs to test function robustness and discover potential crashes
 3. **Advanced Coverage Testing** - Generates comprehensive test suites designed to achieve maximum code coverage with intelligent branch, loop, and exception path analysis
+4. **Intelligent Mutation Testing** - Uses custom AST-based mutation engine with AI analysis to evaluate test suite quality and identify test gaps
 
 The server uses a hybrid AI approach: BAML for structured test generation and Gemini for intelligent input generation, ensuring high-quality, reliable test outputs.
 
@@ -16,6 +17,7 @@ The server uses a hybrid AI approach: BAML for structured test generation and Ge
 - **AI-Powered Unit Test Generation**: Uses BAML with Gemini to generate comprehensive unittest suites covering normal cases, edge cases, and error conditions
 - **Intelligent Fuzz Testing**: Leverages AI to generate diverse, challenging inputs that test function boundaries and error handling
 - **Advanced Coverage Testing**: AST-based code analysis with AI-generated tests targeting specific coverage scenarios for maximum line and branch coverage
+- **Intelligent Mutation Testing**: Custom AST-based mutation engine that generates code mutations and uses AI to analyze test suite quality and suggest improvements
 - **Built-in Coverage Measurement**: Integrates coverage.py library for real-time coverage reporting and analysis
 - **BAML Integration**: Structured AI responses using BAML (Boundary ML) for consistent, parseable test generation
 - **FastMCP Framework**: Built on FastMCP for efficient MCP server implementation
@@ -45,11 +47,15 @@ python-testing-mcp/
 ├── tools/                         # Core testing tool implementations
 │   ├── unit_test_generator.py     # AI-powered unit test generation
 │   ├── fuzz_tester.py             # Intelligent fuzz testing engine
-│   └── coverage_tester.py         # Advanced coverage testing with AST analysis
+│   ├── coverage_tester.py         # Advanced coverage testing with AST analysis
+│   └── mutation_tester.py         # Intelligent mutation testing with AI analysis
 ├── utils/                         # Shared utilities and helpers
 │   ├── __init__.py                # Module exports
 │   ├── ai_clients.py              # Gemini AI client configuration
-│   └── file_handlers.py           # File I/O and AST parsing utilities
+│   ├── file_handlers.py           # File I/O and AST parsing utilities
+│   ├── mutation_engine.py         # Custom AST-based mutation engine
+│   ├── mutation_test_executor.py  # Mutation test execution and reporting
+│   └── mutation_intelligence.py   # AI-powered mutation analysis
 ├── demo/                          # Example files for testing
 │   └── basic_example_functions.py # Simple functions for demonstration
 ├── pyproject.toml                 # Python project configuration and dependencies
@@ -188,7 +194,12 @@ Test the fuzz testing tool:
 fuzz test the add function in @demo/basic_example_functions.py
 ```
 
-These should create test files in the demo folder with comprehensive test coverage.
+Test the mutation testing tool:
+```bash
+run mutation testing on @demo/basic_example_functions.py
+```
+
+These should create test files in the demo folder with comprehensive test coverage and mutation testing reports.
 
 ## Available Tools
 
@@ -234,6 +245,26 @@ These should create test files in the demo folder with comprehensive test covera
   - **State-of-the-Art Testing**: Includes infinity/NaN testing, large number handling, empty collections
   - **Automatic Import Resolution**: Properly includes all necessary imports (sys, math, etc.)
   - **Coverage Reporting**: Generates detailed coverage reports showing achieved coverage percentages
+
+### Mutation Tester
+- **Function**: `mutation_testing_tool`
+- **Description**: Performs intelligent mutation testing using a custom AST-based engine combined with AI analysis to evaluate test suite quality
+- **Parameters**: 
+  - `file_path` (str) - Path to the Python file to test
+- **Features**:
+  - **Custom AST-Based Mutation Engine**: Pure Python implementation without external dependencies
+  - **Smart Mutation Operators**: 
+    - Binary operators (`+` ↔ `-`, `==` ↔ `!=`, `and` ↔ `or`)
+    - Constants (numbers, booleans, strings with intelligent variations)
+    - Conditionals (negated conditions, always true/false branches)
+  - **Intelligent Test Execution**: Automatic test discovery and safe file backup/restore
+  - **AI-Powered Analysis**: Analyzes survived mutations and provides specific recommendations
+  - **Comprehensive Reporting**: 
+    - Mutation score calculation (% of mutations caught by tests)
+    - Detailed analysis of test gaps and weaknesses
+    - Prioritized recommendations for test improvements
+    - Analysis-only mode when no tests are found
+  - **Flexible Operation**: Works with or without existing test files
 
 ## Adding New Tools
 
@@ -293,17 +324,24 @@ uv run mypy tools/ utils/ *.py
 ### BAML Development
 To modify AI prompts or add new AI functions:
 1. Edit `baml_src/main.baml`
-2. Run `uv run baml generate` to update the client code
+2. Run `uv run baml-cli generate --from baml_src` to update the client code
 3. Test changes with the demo functions
 
-### Testing Coverage
-To test the coverage functionality:
+### Testing the Tools
+To test the various testing tools:
+
 ```bash
+# Generate unit tests
+uv run python -c "from tools.unit_test_generator import generate_unit_tests; print(generate_unit_tests('demo/basic_example_functions.py'))"
+
 # Generate coverage tests
 uv run python -c "from tools.coverage_tester import generate_coverage_tests; print(generate_coverage_tests('demo/basic_example_functions.py'))"
 
-# Run the generated coverage tests
-cd demo && uv run python test_coverage_basic_example_functions.py
+# Run mutation testing
+uv run python -c "from tools.mutation_tester import run_mutation_testing; print(run_mutation_testing('demo/basic_example_functions.py'))"
+
+# Run fuzz testing on a specific function
+uv run python -c "from tools.fuzz_tester import fuzz_test_function; print(fuzz_test_function('demo/basic_example_functions.py', 'add'))"
 ```
 
 ## License

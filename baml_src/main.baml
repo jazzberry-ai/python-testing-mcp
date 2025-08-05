@@ -164,3 +164,62 @@ function GenerateCoverageTests(source_code: string, analysis: CoverageAnalysis) 
     {{ ctx.output_format }}
   "#
 }
+
+// Define the structure for mutation analysis results.
+class MutationAnalysis {
+  critical_survivors string[] @description("List of critical mutations that survived testing")
+  edge_case_gaps string[] @description("Edge cases revealed by mutation testing")
+  test_recommendations string[] @description("Specific test cases recommended to catch survivors")
+  overall_assessment string @description("Overall assessment of test suite quality")
+}
+
+// Define the function for analyzing mutation testing results.
+function AnalyzeMutationResults(source_code: string, survived_mutations: string, mutation_details: string) -> MutationAnalysis {
+  client Gemini
+
+  prompt #"
+    You are an expert in mutation testing and test quality analysis. Your task is to analyze the results of mutation testing and provide actionable insights to improve test coverage.
+
+    Do not add any commentary before or after the response.
+
+    ORIGINAL SOURCE CODE:
+    ---
+    {{ source_code }}
+    ---
+
+    SURVIVED MUTATIONS (mutations that tests failed to catch):
+    ---
+    {{ survived_mutations }}
+    ---
+
+    DETAILED MUTATION INFORMATION:
+    ---
+    {{ mutation_details }}
+    ---
+
+    Analyze these results and provide:
+
+    1. **Critical Survivors**: Identify mutations that represent serious potential bugs
+       - Focus on logic errors, boundary conditions, error handling gaps
+       - Explain why each is dangerous in production
+
+    2. **Edge Case Gaps**: Identify missing edge case coverage revealed by mutations
+       - Boundary value testing gaps
+       - Error condition testing gaps
+       - Special input handling gaps
+
+    3. **Test Recommendations**: For each important survived mutation, suggest specific test cases
+       - Provide concrete test scenarios with example inputs
+       - Focus on tests that would catch the most dangerous mutations
+       - Be specific about assertions and expected behaviors
+
+    4. **Overall Assessment**: Summarize the test suite quality
+       - Mutation testing score interpretation
+       - Most critical areas needing attention
+       - Priority order for improvements
+
+    Focus on actionable, specific recommendations that will most effectively improve test quality.
+
+    {{ ctx.output_format }}
+  "#
+}
