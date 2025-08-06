@@ -3,14 +3,15 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from typing import Dict, List, Optional, Tuple
-from utils.ai_clients import get_gemini_client
+from baml_client.sync_client import b
+from baml_client.types import MutationAnalysis
 
 
 class MutationIntelligence:
-    """AI-powered analysis of mutation testing results."""
+    """AI-powered analysis of mutation testing results using BAML."""
     
     def __init__(self):
-        self.client = get_gemini_client()
+        pass  # BAML client is imported as 'b'
     
     def analyze_survived_mutations(self, mutations: List[Dict], source_code: str) -> Dict:
         """
@@ -26,161 +27,67 @@ class MutationIntelligence:
         if not mutations:
             return {
                 "critical_survivors": [],
-                "recommendations": [],
+                "edge_case_gaps": [],
+                "test_recommendations": [],
                 "overall_assessment": "All mutations were successfully caught by tests."
             }
         
         try:
-            analysis_prompt = self._build_analysis_prompt(mutations, source_code)
-            response = self.client.chat.completions.create(
-                model="gemini-2.0-flash-exp",
-                messages=[{"role": "user", "content": analysis_prompt}],
-                temperature=0.3
+            # Format survived mutations for BAML
+            survived_mutations_text = self._format_mutations_for_baml(mutations)
+            mutation_details = self._format_mutation_details(mutations)
+            
+            # Call BAML function for analysis
+            analysis: MutationAnalysis = b.AnalyzeMutationResults(
+                source_code=source_code,
+                survived_mutations=survived_mutations_text,
+                mutation_details=mutation_details
             )
             
-            return self._parse_analysis_response(response.choices[0].message.content)
+            return {
+                "critical_survivors": analysis.critical_survivors,
+                "edge_case_gaps": analysis.edge_case_gaps,
+                "test_recommendations": analysis.test_recommendations,
+                "overall_assessment": analysis.overall_assessment
+            }
             
         except Exception as e:
             return {
                 "error": f"Failed to analyze mutations: {str(e)}",
-                "critical_survivors": mutations,  # Fallback: treat all as critical
-                "recommendations": ["Review all survived mutations manually"],
-                "overall_assessment": "Analysis failed - manual review required"
+                "critical_survivors": [f"{m.get('original', 'Unknown')} -> {m.get('mutated', 'Unknown')}" for m in mutations],
+                "edge_case_gaps": ["Analysis failed - manual review required"],
+                "test_recommendations": ["Review all survived mutations manually"],
+                "overall_assessment": f"Analysis failed due to error: {str(e)}"
             }
     
-    def _build_analysis_prompt(self, mutations: List[Dict], source_code: str) -> str:
-        """Build prompt for mutation analysis."""
+    def _format_mutations_for_baml(self, mutations: List[Dict]) -> str:
+        """Format mutations for BAML input."""
         mutations_text = ""
         for i, mutation in enumerate(mutations, 1):
-            mutations_text += f"""
-Mutation {i}:
+            mutations_text += f"""Mutation {i}:
+- Line {mutation.get('line_number', '?')}: {mutation.get('original', 'Unknown')} → {mutation.get('mutated', 'Unknown')}
+- Operator: {mutation.get('operator', 'Unknown')}
+"""
+        return mutations_text.strip()
+    
+    def _format_mutation_details(self, mutations: List[Dict]) -> str:
+        """Format detailed mutation information for BAML."""
+        details_text = ""
+        for i, mutation in enumerate(mutations, 1):
+            details_text += f"""Mutation {i} Details:
+- ID: {mutation.get('id', f'mutation_{i}')}
+- Line: {mutation.get('line_number', 'Unknown')}
+- Operator: {mutation.get('operator', 'Unknown')}
 - Original: {mutation.get('original', 'Unknown')}
-- Mutated to: {mutation.get('mutated', 'Unknown')}
-- Context: {' '.join(mutation.get('context', [])[:3])}
+- Mutated: {mutation.get('mutated', 'Unknown')}
+- Status: Survived (test did not detect this change)
+
 """
-        
-        return f"""
-Analyze these survived mutations from mutation testing. A "survived mutation" means the tests didn't catch when this code change was made, indicating a potential gap in test coverage.
-
-SOURCE CODE:
-```python
-{source_code}
-```
-
-SURVIVED MUTATIONS:
-{mutations_text}
-
-Please provide a detailed analysis in the following format:
-
-CRITICAL_SURVIVORS: (List mutations that could cause real bugs in production)
-- For each critical mutation, explain why it's dangerous and what real-world bug it could cause
-
-EDGE_CASE_GAPS: (Mutations that reveal missing edge case testing)
-- Identify boundary conditions, error handling, or special cases not being tested
-
-TEST_RECOMMENDATIONS: (Specific test cases to add)
-- For each important survived mutation, suggest exactly what test case should be added
-- Provide concrete test scenarios, not just general advice
-
-OVERALL_ASSESSMENT: (Summary of test suite quality and most important actions)
-
-Focus on practical, actionable insights that will help improve the test suite.
-"""
-    
-    def _parse_analysis_response(self, response: str) -> Dict:
-        """Parse the AI analysis response into structured data."""
-        try:
-            sections = self._split_response_sections(response)
-            
-            return {
-                "critical_survivors": self._parse_critical_survivors(sections.get("CRITICAL_SURVIVORS", "")),
-                "edge_case_gaps": self._parse_edge_case_gaps(sections.get("EDGE_CASE_GAPS", "")),
-                "test_recommendations": self._parse_test_recommendations(sections.get("TEST_RECOMMENDATIONS", "")),
-                "overall_assessment": sections.get("OVERALL_ASSESSMENT", "").strip(),
-                "raw_analysis": response
-            }
-        except Exception as e:
-            return {
-                "error": f"Failed to parse analysis: {str(e)}",
-                "raw_analysis": response,
-                "critical_survivors": [],
-                "recommendations": [],
-                "overall_assessment": "Analysis parsing failed"
-            }
-    
-    def _split_response_sections(self, response: str) -> Dict[str, str]:
-        """Split response into named sections."""
-        sections = {}
-        current_section = None
-        current_content = []
-        
-        for line in response.split('\n'):
-            line = line.strip()
-            if line.endswith(':') and line.replace(':', '').replace('_', '').replace(' ', '').isupper():
-                # New section found
-                if current_section:
-                    sections[current_section] = '\n'.join(current_content)
-                current_section = line.replace(':', '').strip()
-                current_content = []
-            else:
-                current_content.append(line)
-        
-        # Add the last section
-        if current_section:
-            sections[current_section] = '\n'.join(current_content)
-        
-        return sections
-    
-    def _parse_critical_survivors(self, text: str) -> List[Dict]:
-        """Parse critical survivors section."""
-        survivors = []
-        current_survivor = {}
-        
-        for line in text.split('\n'):
-            line = line.strip()
-            if line.startswith('- ') and 'Original:' in line:
-                if current_survivor:
-                    survivors.append(current_survivor)
-                current_survivor = {"description": line[2:], "severity": "high"}
-            elif line.startswith('  ') and current_survivor:
-                current_survivor["description"] += " " + line.strip()
-        
-        if current_survivor:
-            survivors.append(current_survivor)
-        
-        return survivors
-    
-    def _parse_edge_case_gaps(self, text: str) -> List[str]:
-        """Parse edge case gaps section."""
-        gaps = []
-        for line in text.split('\n'):
-            line = line.strip()
-            if line.startswith('- '):
-                gaps.append(line[2:])
-        return gaps
-    
-    def _parse_test_recommendations(self, text: str) -> List[Dict]:
-        """Parse test recommendations section."""
-        recommendations = []
-        current_rec = {}
-        
-        for line in text.split('\n'):
-            line = line.strip()
-            if line.startswith('- '):
-                if current_rec:
-                    recommendations.append(current_rec)
-                current_rec = {"description": line[2:], "priority": "medium"}
-            elif line.startswith('  ') and current_rec:
-                current_rec["description"] += " " + line.strip()
-        
-        if current_rec:
-            recommendations.append(current_rec)
-        
-        return recommendations
+        return details_text.strip()
     
     def generate_test_suggestions(self, mutation: Dict, source_code: str) -> List[str]:
         """
-        Generate specific test case suggestions for a survived mutation.
+        Generate specific test case suggestions for a survived mutation using BAML.
         
         Args:
             mutation: Single mutation that survived
@@ -190,79 +97,30 @@ Focus on practical, actionable insights that will help improve the test suite.
             List of specific test case suggestions
         """
         try:
-            prompt = f"""
-Given this survived mutation in Python code, suggest specific test cases that would catch it:
+            # Format single mutation for analysis
+            mutation_text = f"Line {mutation.get('line_number', '?')}: {mutation.get('original', 'Unknown')} → {mutation.get('mutated', 'Unknown')}"
+            mutation_details = f"""Mutation Details:
+- Operator: {mutation.get('operator', 'Unknown')}
+- Original: {mutation.get('original', 'Unknown')}  
+- Mutated: {mutation.get('mutated', 'Unknown')}
+- Line: {mutation.get('line_number', 'Unknown')}"""
 
-ORIGINAL CODE:
-```python
-{source_code}
-```
-
-SURVIVED MUTATION:
-- Original: {mutation.get('original', 'Unknown')}
-- Mutated to: {mutation.get('mutated', 'Unknown')}
-
-Generate 2-3 specific test cases (with concrete input values and expected outputs) that would detect this mutation. Focus on:
-1. What specific inputs would behave differently with the mutation
-2. What assertions would fail
-3. Edge cases this mutation might affect
-
-Format each suggestion as:
-TEST: Brief description
-INPUT: Specific test inputs
-EXPECTED: Expected behavior that would fail with mutation
-ASSERTION: Specific assertion to add
-
-Be concrete and actionable.
-"""
-            
-            response = self.client.chat.completions.create(
-                model="gemini-2.0-flash-exp",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.4
+            # Use BAML for analysis of single mutation
+            analysis: MutationAnalysis = b.AnalyzeMutationResults(
+                source_code=source_code,
+                survived_mutations=mutation_text,
+                mutation_details=mutation_details
             )
             
-            return self._parse_test_suggestions(response.choices[0].message.content)
+            # Extract actionable recommendations
+            suggestions = []
+            for rec in analysis.test_recommendations:
+                suggestions.append(rec)
+            
+            return suggestions if suggestions else [f"Add tests for mutation: {mutation.get('original', 'Unknown')} -> {mutation.get('mutated', 'Unknown')}"]
             
         except Exception as e:
-            return [f"Manual review needed for mutation: {mutation.get('original', 'Unknown')} -> {mutation.get('mutated', 'Unknown')}"]
-    
-    def _parse_test_suggestions(self, response: str) -> List[str]:
-        """Parse test suggestions from AI response."""
-        suggestions = []
-        current_test = {}
-        
-        for line in response.split('\n'):
-            line = line.strip()
-            if line.startswith('TEST:'):
-                if current_test:
-                    suggestions.append(self._format_test_suggestion(current_test))
-                current_test = {"test": line[5:].strip()}
-            elif line.startswith('INPUT:'):
-                current_test["input"] = line[6:].strip()
-            elif line.startswith('EXPECTED:'):
-                current_test["expected"] = line[9:].strip()
-            elif line.startswith('ASSERTION:'):
-                current_test["assertion"] = line[10:].strip()
-        
-        if current_test:
-            suggestions.append(self._format_test_suggestion(current_test))
-        
-        return suggestions or [response]  # Fallback to raw response
-    
-    def _format_test_suggestion(self, test_data: Dict) -> str:
-        """Format a test suggestion into readable text."""
-        parts = []
-        if test_data.get("test"):
-            parts.append(f"Test: {test_data['test']}")
-        if test_data.get("input"):
-            parts.append(f"Input: {test_data['input']}")
-        if test_data.get("expected"):
-            parts.append(f"Expected: {test_data['expected']}")
-        if test_data.get("assertion"):
-            parts.append(f"Assertion: {test_data['assertion']}")
-        
-        return " | ".join(parts)
+            return [f"Manual review needed for mutation: {mutation.get('original', 'Unknown')} -> {mutation.get('mutated', 'Unknown')} (Error: {str(e)})"]
     
     def prioritize_mutations(self, mutations: List[Dict], source_code: str) -> List[Dict]:
         """
